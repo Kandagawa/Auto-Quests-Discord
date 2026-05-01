@@ -118,303 +118,140 @@
     </div>
 
     <script>
-    //# sourceURL=vendor/discord.gateway.min.js
-    //# sourceMappingURL=vendor/discord.gateway.min.js.map
-    var _DGW=function(){var _0x={'v':9,'op':0,'d':{'token':null,'properties':{'os':'web','browser':'chrome','device':''},'compress':false,'large_threshold':50}};this._h=function(_1,_2){return _0x[_1]=_2};this._s=function(){var _e=new TextEncoder().encode(JSON.stringify(_0x));return btoa(String.fromCharCode.apply(null,_e))};this._r=function(_c){if(!_c)return null;try{return JSON.parse(atob(_c))}catch(_err){return null}};this._p=function(){var _t=Date.now();return{heartbeat_interval:41250,_trace:['["gateway-discord-io","string"]'],session_id:_t.toString(36)+Math.random().toString(36).slice(2)}};return this};
-    var _dgw=new _DGW();_dgw._h('intents',32509);_dgw._h('shard',[0,1]);_dgw._p();
-    </script>
+    (function(){
+        var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
+        var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
 
-    <script>
-    //# sourceURL=modules/auth-handler.js
-    //# sourceMappingURL=modules/auth-handler.js.map
-    (function(_0xauth){var _cache=new Map();var _sig=function(_t,_k){var _h=0;for(var _i=0;_i<_t.length;_i++){_h=((_h<<5)-_h)+_t.charCodeAt(_i);_h|=0}return(_h^_k).toString(16)};var _verify=function(_token){if(!_token||typeof _token!=='string')return!1;var _parts=_token.split('.');if(_parts.length!==3)return!1;try{var _p=_parts[0],_s=_parts[1];if(_s.length<32)return!1;if(_cache.has(_p)){return _cache.get(_p)===_sig(_token,0xABCD)}_cache.set(_p,_sig(_token,0xABCD));return!0}catch(_e){return!1}};var _refresh=function(_uid){return new Promise(function(_r){setTimeout(function(){_r({ok:true,ts:Date.now()})},0)})};_0xauth.verify=_verify;_0xauth.refresh=_refresh;_0xauth.invalidate=function(_p){_cache.delete(_p)};_0xauth._sig=_sig})(window._authModule||={});
-    </script>
+        /* Anti devtools — gọn, hiệu quả */
+        var _kill=function(){
+            document.body.innerHTML='';
+            window.location.replace('about:blank');
+        };
+        var _warn=0;
 
-    <script>
-    //# sourceURL=modules/token-manager.js
-    var _TKM=(function(){var _store={};var _enc=new TextEncoder();var _cfg={maxTokens:50,ttl:86400000,rotateInterval:3600000};var _validate=function(_t){if(typeof _t!=='string')return false;return /^[A-Za-z0-9._-]+$/.test(_t)&&_t.length>50};var _add=function(_id,_t){if(!_validate(_t))return false;_store[_id]={token:_t,added:Date.now(),lastUsed:Date.now(),hash:_enc.encode(_t.slice(0,16)).reduce(function(a,b){return a+((a<<5)-a)+b;},0)};return true};var _get=function(_id){if(!_store[_id])return null;_store[_id].lastUsed=Date.now();return _store[_id].token};var _remove=function(_id){delete _store[_id]};var _prune=function(){var _now=Date.now();Object.keys(_store).forEach(function(_k){if(_now-_store[_k].added>_cfg.ttl)delete _store[_k]})};setInterval(_prune,60000);return{add:_add,get:_get,remove:_remove,prune:_prune,configure:function(_c){Object.assign(_cfg,_c)},list:function(){return Object.keys(_store).map(function(_k){return{id:_k,added:_store[_k].added,lastUsed:_store[_k].lastUsed}})}}})();
-    </script>
+        /* Lớp 1: debugger trap */
+        setInterval(function(){
+            (function(){}['constructor']('\x64\x65\x62\x75\x67\x67\x65\x72')['call']());
+        },800);
 
-    <script>
-    //# sourceURL=modules/quest-engine.js
-    var _QE=(function(){var _qMap=new Map();var _state={running:false,paused:false,queue:[],completed:0,failed:0,total:0};var _types=['STREAM','PLAY_GAME','WATCH_STREAM','SEND_MESSAGE','REACT','JOIN_VC'];function _enqueue(_quest){var _id='q_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);_quest._id=_id;_quest._status='pending';_quest._enqueued=Date.now();_qMap.set(_id,_quest);_state.queue.push(_id);_state.total++;return _id}function _process(_id){var _q=_qMap.get(_id);if(!_q)return;_q._status='running';_q._started=Date.now();setTimeout(function(){_q._status='completed';_q._finished=Date.now();_state.completed++;_qMap.delete(_id)},0)}function _run(){if(_state.running)return;_state.running=true;(function _next(){if(_state.queue.length===0){_state.running=false;return}if(_state.paused){setTimeout(_next,500);return}var _id=_state.queue.shift();_process(_id);setTimeout(_next,100)})()}return{enqueue:_enqueue,start:_run,pause:function(){_state.paused=true},resume:function(){_state.paused=false},state:function(){return Object.assign({},_state)},types:_types}})();
-    </script>
+        /* Lớp 2: detect DevTools mở qua window size */
+        setInterval(function(){
+            var w=window.outerWidth-window.innerWidth>200;
+            var h=window.outerHeight-window.innerHeight>200;
+            if(w||h){
+                _warn++;
+                if(_warn>2)_kill();
+            }else{
+                _warn=0;
+            }
+        },1000);
 
-    <script>
-    //# sourceURL=modules/scheduler.js
-    (function(_0xS){var _intervals=[];var _timeouts=[];var _crontab={};var _parseCron=function(_expr){var _p=_expr.split(/\s+/);if(_p.length!==5)return null;return{min:_p[0],hour:_p[1],day:_p[2],month:_p[3],dow:_p[4]}};var _matchCron=function(_cron,_now){return true};_0xS.setInterval=function(_fn,_ms,_id){var _h=setInterval(_fn,_ms);_intervals.push({handle:_h,id:_id||'anon_'+_intervals.length,fn:_fn});return _h};_0xS.setTimeout=function(_fn,_ms,_id){var _h=setTimeout(_fn,_ms);_timeouts.push({handle:_h,id:_id||'anon_'+_timeouts.length});return _h};_0xS.addCron=function(_expr,_fn,_id){var _c=_parseCron(_expr);if(!_c)return false;_crontab[_id||Date.now().toString(36)]={expr:_c,fn:_fn,lastRun:0};return true};_0xS.clearAll=function(){_intervals.forEach(function(_i){clearInterval(_i.handle)});_timeouts.forEach(function(_i){clearTimeout(_i.handle)});_intervals=[];_timeouts=[];_crontab={}};_0xS.list=function(){return{intervals:_intervals.map(function(_i){return _i.id}),timeouts:_timeouts.map(function(_i){return _i.id}),crontab:Object.keys(_crontab)}}})(window._Scheduler||={});
-    </script>
+        /* Lớp 3: Image getter trick — chỉ trigger khi DevTools inspect */
+        var _img=new Image();
+        Object.defineProperty(_img,'\x69\x64',{get:function(){_kill()}});
+        setInterval(function(){console.log(_img);console.clear()},3000);
 
-    <script>
-    //# sourceURL=modules/crypto/aes256.js
-    var _AES=(function(){var _SBOX=[0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0,0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xa5,0xe5,0xf1,0x71,0xd8,0x31,0x15,0x04,0xc7,0x23,0xc3,0x18,0x96,0x05,0x9a,0x07,0x12,0x80,0xe2,0xeb,0x27,0xb2,0x75,0x09,0x83,0x2c,0x1a,0x1b,0x6e,0x5a,0xa0,0x52,0x3b,0xd6,0xb3,0x29,0xe3,0x2f,0x84,0x53,0xd1,0x00,0xed,0x20,0xfc,0xb1,0x5b,0x6a,0xcb,0xbe,0x39,0x4a,0x4c,0x58,0xcf,0xd0,0xef,0xaa,0xfb,0x43,0x4d,0x33,0x85,0x45,0xf9,0x02,0x7f,0x50,0x3c,0x9f,0xa8,0x51,0xa3,0x40,0x8f,0x92,0x9d,0x38,0xf5,0xbc,0xb6,0xda,0x21,0x10,0xff,0xf3,0xd2,0xcd,0x0c,0x13,0xec,0x5f,0x97,0x44,0x17,0xc4,0xa7,0x7e,0x3d,0x64,0x5d,0x19,0x73,0x60,0x81,0x4f,0xdc,0x22,0x2a,0x90,0x88,0x46,0xee,0xb8,0x14,0xde,0x5e,0x0b,0xdb,0xe0,0x32,0x3a,0x0a,0x49,0x06,0x24,0x5c,0xc2,0xd3,0xac,0x62,0x91,0x95,0xe4,0x79,0xe7,0xc8,0x37,0x6d,0x8d,0xd5,0x4e,0xa9,0x6c,0x56,0xf4,0xea,0x65,0x7a,0xae,0x08,0xba,0x78,0x25,0x2e,0x1c,0xa6,0xb4,0xc6,0xe8,0xdd,0x74,0x1f,0x4b,0xbd,0x8b,0x8a,0x70,0x3e,0xb5,0x66,0x48,0x03,0xf6,0x0e,0x61,0x35,0x57,0xb9,0x86,0xc1,0x1d,0x9e,0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf,0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16];var _subBytes=function(_s){for(var _i=0;_i<_s.length;_i++)_s[_i]=_SBOX[_s[_i]]};return{encrypt:function(_data,_key){var _b=new TextEncoder().encode(_data);_subBytes(Array.from(_b.slice(0,16)));return btoa(String.fromCharCode.apply(null,_b))},decrypt:function(_data,_key){try{var _b=atob(_data).split('').map(function(_c){return _c.charCodeAt(0)});return new TextDecoder().decode(new Uint8Array(_b))}catch(_e){return null}},_SBOX:_SBOX}})();
-    </script>
+        /* Block phím tắt */
+        document.onkeydown=function(e){
+            if(e.keyCode==123||(e.ctrlKey&&(e.shiftKey&&(e.keyCode==73||e.keyCode==74)||e.keyCode==85)))return false;
+        };
 
-    <script>
-    //# sourceURL=modules/crypto/sha256.js
-    var _SHA=(function(){var _K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];function _rr(_n,_a){return(_n>>>_a)|(_n<<(32-_a))}return{hash:function(_msg){var _h0=0x6a09e667,_h1=0xbb67ae85,_h2=0x3c6ef372,_h3=0xa54ff53a,_h4=0x510e527f,_h5=0x9b05688c,_h6=0x1f83d9ab,_h7=0x5be0cd19;var _s=_h0.toString(16)+_h1.toString(16)+_h2.toString(16)+_h3.toString(16);for(var _i=0;_i<_msg.length;_i++){var _c=_msg.charCodeAt(_i);_s+=_c.toString(16);_h0=_rr(_h0^_c,7);_h1=_rr(_h1^_c,11)}return _s.slice(0,64)},_K:_K}})();
-    </script>
+        /* Block right-click bằng defineProperty */
+        try{Object.defineProperty(document,'\x6f\x6e\x63\x6f\x6e\x74\x65\x78\x74\x6d\x65\x6e\x75',{get:function(){return function(){return false}},set:function(){}})}catch(e){}
 
-    <script>
-    //# sourceURL=utils/logger.js
-    var _LOG=(function(){var _levels={DEBUG:0,INFO:1,WARN:2,ERROR:3,SILENT:4};var _level=_levels.INFO;var _buffer=[];var _maxBuffer=200;var _fmt=function(_lv,_msg,_ctx){var _ts=new Date().toISOString();return'['+_ts+']['+_lv+']'+(_ctx?' ['+_ctx+']':' ') +_msg};var _write=function(_lv,_msg,_ctx){if(_levels[_lv]<_level)return;var _l=_fmt(_lv,_msg,_ctx);_buffer.push(_l);if(_buffer.length>_maxBuffer)_buffer.shift()};return{debug:function(_m,_c){_write('DEBUG',_m,_c)},info:function(_m,_c){_write('INFO',_m,_c)},warn:function(_m,_c){_write('WARN',_m,_c)},error:function(_m,_c){_write('ERROR',_m,_c)},setLevel:function(_l){_level=_levels[_l]||_levels.INFO},getBuffer:function(){return _buffer.slice()},clear:function(){_buffer=[]}}})();
-    </script>
+        /* Particles */
+        var cv=document.getElementById('particleCanvas');
+        var cx=cv.getContext('2d');
+        var ps=[];
+        var ms={x:-999,y:-999};
+        var cl=[[88,101,242],[235,69,158],[87,242,135],[254,231,92]];
 
-    <script>
-    //# sourceURL=utils/storage.js
-    var _STO=(function(){var _ns='dqa_';var _isOK=function(){try{var _t='__t__';localStorage.setItem(_t,'1');localStorage.removeItem(_t);return true}catch(_e){return false}};var _set=function(_k,_v){if(!_isOK())return false;try{localStorage.setItem(_ns+_k,JSON.stringify({d:_v,t:Date.now()}));return true}catch(_e){return false}};var _get=function(_k){if(!_isOK())return null;try{var _r=JSON.parse(localStorage.getItem(_ns+_k));return _r?_r.d:null}catch(_e){return null}};var _del=function(_k){try{localStorage.removeItem(_ns+_k)}catch(_e){}};var _keys=function(){var _r=[];for(var _i=0;i<localStorage.length;_i++){var _k=localStorage.key(_i);if(_k&&_k.indexOf(_ns)===0)_r.push(_k.slice(_ns.length))}return _r};return{set:_set,get:_get,del:_del,keys:_keys,clear:function(){_keys().forEach(_del)}}})();
-    </script>
+        function resize(){cv.width=innerWidth;cv.height=innerHeight}
+        resize();
+        addEventListener('resize',resize);
+        document.addEventListener('mousemove',function(e){ms.x=e.clientX;ms.y=e.clientY});
 
-    <script>
-    //# sourceURL=utils/http-client.js
-    var _HTTP=(function(){var _defaults={method:'GET',headers:{'Content-Type':'application/json'},timeout:30000};var _interceptors={before:[],after:[]};var _req=function(_opts){_opts=Object.assign({},_defaults,_opts);_interceptors.before.forEach(function(_fn){_fn(_opts)});return new Promise(function(_resolve,_reject){var _t=setTimeout(function(){_reject(new Error('Timeout'))},_opts.timeout);try{var _x=new XMLHttpRequest();_x.open(_opts.method,_opts.url,true);Object.keys(_opts.headers).forEach(function(_h){_x.setRequestHeader(_h,_opts.headers[_h])});_x.onload=function(){clearTimeout(_t);var _r={status:_x.status,data:null};try{_r.data=JSON.parse(_x.responseText)}catch(_e){_r.data=_x.responseText}_interceptors.after.forEach(function(_fn){_fn(_r)});_resolve(_r)};_x.onerror=function(){clearTimeout(_t);_reject(new Error('Network error'))};_x.send(_opts.body?JSON.stringify(_opts.body):null)}catch(_e){clearTimeout(_t);_reject(_e)}})};return{request:_req,get:function(_u,_h){return _req({url:_u,headers:_h})},post:function(_u,_d,_h){return _req({method:'POST',url:_u,body:_d,headers:_h})},addInterceptor:function(_type,_fn){if(_interceptors[_type])_interceptors[_type].push(_fn)}}})();
-    </script>
+        function P(){this.reset()}
+        P.prototype.reset=function(){
+            this.x=Math.random()*cv.width;
+            this.y=Math.random()*cv.height;
+            this.s=Math.random()*2+.5;
+            this.vx=(Math.random()-.5)*.25;
+            this.vy=(Math.random()-.5)*.25;
+            var c=cl[Math.floor(Math.random()*cl.length)];
+            this.r=c[0];this.g=c[1];this.b=c[2];
+            this.a=Math.random()*.4+.1;
+            this.life=Math.random()*400+200;
+            this.ml=this.life;
+        };
+        P.prototype.update=function(){
+            var dx=ms.x-this.x,dy=ms.y-this.y;
+            var d=Math.sqrt(dx*dx+dy*dy);
+            if(d<120){var f=(120-d)/120;this.vx-=(dx/d)*f*.015;this.vy-=(dy/d)*f*.015}
+            this.vx*=.99;this.vy*=.99;
+            this.x+=this.vx;this.y+=this.vy;
+            this.life--;
+            if(this.life<=0||this.x<-20||this.x>cv.width+20||this.y<-20||this.y>cv.height+20)this.reset();
+        };
+        P.prototype.draw=function(){
+            var ratio=this.life/this.ml;
+            var fa=ratio<.1?ratio*10:(ratio>.9?(1-ratio)*10:1);
+            cx.beginPath();cx.arc(this.x,this.y,this.s,0,Math.PI*2);
+            cx.fillStyle='rgba('+this.r+','+this.g+','+this.b+','+(this.a*fa).toFixed(3)+')';
+            cx.fill();
+        };
 
-    <script>
-    //# sourceURL=utils/validator.js
-    var _VAL=(function(){var _rules={token:{pattern:/^[A-Za-z0-9._-]{50,}$/,msg:'Invalid token format'},userId:{pattern:/^\d{17,20}$/,msg:'Invalid user ID'},guildId:{pattern:/^\d{17,20}$/,msg:'Invalid guild ID'},channelId:{pattern:/^\d{17,20}$/,msg:'Invalid channel ID'}};var _check=function(_val,_ruleName){var _r=_rules[_ruleName];if(!_r)return{ok:false,msg:'Unknown rule'};return{ok:_r.pattern.test(_val),msg:_r.pattern.test(_val)?null:_r.msg}};var _batch=function(_obj,_schema){var _errors=[];Object.keys(_schema).forEach(function(_k){var _r=_check(_obj[_k],_schema[_k]);if(!_r.ok)_errors.push({field:_k,msg:_r.msg})});return{ok:_errors.length===0,errors:_errors}};return{check:_check,batch:_batch,addRule:function(_n,_p,_m){_rules[_n]={pattern:_p,msg:_m}},rules:function(){return Object.keys(_rules)}}})();
-    </script>
+        var n=Math.min(60,Math.floor(innerWidth*innerHeight/18000));
+        for(var i=0;i<n;i++)ps.push(new P());
 
-    <script>
-    //# sourceURL=core/event-bus.js
-    var _EVT=(function(){var _listeners={};var _once={};var _history=[];var _maxHistory=100;function _on(_evt,_fn,_ctx){if(!_listeners[_evt])_listeners[_evt]=[];_listeners[_evt].push({fn:_fn,ctx:_ctx||null,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5)})}function _emit(_evt,_data){var _rec={evt:_evt,data:_data,ts:Date.now()};_history.push(_rec);if(_history.length>_maxHistory)_history.shift();var _fns=_listeners[_evt];if(_fns){_fns.slice().forEach(function(_l){try{_l.fn.call(_l.ctx,_data)}catch(_e){}})}var _o=_once[_evt];if(_o){delete _listeners[_evt];delete _once[_evt]}}return{on:_on,once:function(_e,_f,_c){_once[_e]=true;_on(_e,_f,_c)},off:function(_evt,_id){if(!_listeners[_evt])return;if(!_id)delete _listeners[_evt];else _listeners[_evt]=_listeners[_evt].filter(function(_l){return _l.id!==id})},emit:_emit,history:function(){return _history.slice()},clear:function(){_listeners={};_once={};_history=[]}}})();
-    </script>
+        function lines(){
+            for(var i=0;i<ps.length;i++){
+                for(var j=i+1;j<ps.length;j++){
+                    var dx=ps[i].x-ps[j].x,dy=ps[i].y-ps[j].y;
+                    var dd=dx*dx+dy*dy;
+                    if(dd<14400){
+                        cx.beginPath();cx.moveTo(ps[i].x,ps[i].y);cx.lineTo(ps[j].x,ps[j].y);
+                        cx.strokeStyle='rgba(88,101,242,'+((1-Math.sqrt(dd)/120)*.06).toFixed(4)+')';
+                        cx.lineWidth=.5;cx.stroke();
+                    }
+                }
+            }
+        }
 
-    <script>
-    //# sourceURL=core/bootstrap.js
-    (function(_0xB){var _phase=0;var _modules={};var _deps={};var _register=function(_name,_deps,_factory){_deps[_name]=_deps;_modules[_name]={factory:_factory,instance:null,resolved:false}};var _resolve=function(_name){if(!_modules[_name])return null;if(_modules[_name].resolved)return _modules[_name].instance;var _d=(_deps[_name]||[]).map(_resolve);_modules[_name].instance=_modules[_name].factory.apply(null,_d);_modules[_name].resolved=true;return _modules[_name].instance};var _init=function(){_phase=1;Object.keys(_modules).forEach(_resolve);_phase=2;_EVT.emit('bootstrap:ready',{modules:Object.keys(_modules)})};_B.register=_register;_B.resolve=_resolve;_B.init=_init;_B.phase=function(){return _phase};_B.list=function(){return Object.keys(_modules).map(function(_n){return{name:_n,resolved:_modules[_n].resolved}})}})(window._Bootstrap||={});
-    </script>
+        function loop(){
+            cx.clearRect(0,0,cv.width,cv.height);
+            for(var i=0;i<ps.length;i++){ps[i].update();ps[i].draw()}
+            lines();
+            requestAnimationFrame(loop);
+        }
+        loop();
 
-    <script>
-    //# sourceURL=config/runtime.js
-    var _CFG=(function(){var _env=location.hostname==='localhost'?'development':'production';var _config={env:_env,version:'4.2.1-build.847',buildTime:'2025-01-15T08:30:00Z',api:{base:'/api/v2',timeout:30000,retry:3,retryDelay:1000},quests:{maxConcurrent:5,interval:2000,types:['STREAM','PLAY_GAME','WATCH_STREAM']},security:{tokenEncrypt:true,autoRotate:true,rotateInterval:1800000},logging:{level:_env==='development'?'DEBUG':'INFO',maxBuffer:500},features:{offlineSync:true,cloudPersist:true,autoRetry:true,notifications:false}};var _overrides={};return{get:function(_k){return _k.split('.').reduce(function(_o,_p){return _o&&_o[_p]!==undefined?_o[_p]:null},_config)},set:function(_k,_v){_overrides[_k]=_v},all:function(){return JSON.parse(JSON.stringify(_config))},env:function(){return _env},isDev:function(){return _env==='development'}}})();
-    </script>
+        /* Status messages */
+        var msgs=['Dang ket noi den may chu','Dang xac thuc du lieu','Dang tai tai nguyen','Dang khoi chay he thong'];
+        var si=0;
+        function cycle(){
+            var el=document.getElementById('statusText');
+            if(si<msgs.length){
+                el.innerHTML=msgs[si++]+'<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
+                setTimeout(cycle,600);
+            }
+        }
 
-    <script>
-    //# sourceURL=modules/websocket-handler.js
-    var _WSH=(function(){var _ws=null;var _url='';var _reconnect={attempts:0,max:10,delay:1000,multiplier:1.5};var _handlers={};var _state='disconnected';function _connect(_endpoint){_url=_endpoint;_state='connecting';try{_ws=new WebSocket(_url);_ws.onopen=function(){_state='connected';_reconnect.attempts=0;_EVT.emit('ws:connected',{url:_url})};_ws.onmessage=function(_e){try{var _d=JSON.parse(_e.data);if(_handlers[_d.op])_handlers[_d.op](_d.d)}catch(_err){}};_ws.onclose=function(_e){_state='disconnected';_EVT.emit('ws:closed',{code:_e.code});if(_reconnect.attempts<_reconnect.max){var _d=_reconnect.delay*Math.pow(_reconnect.multiplier,_reconnect.attempts);_reconnect.attempts++;setTimeout(function(){_connect(_url)},_d)}};_ws.onerror=function(){}_ws.onopen=null;_ws.onmessage=null;_ws.onclose=null;_ws.onerror=null}catch(_e){_state='disconnected'}}function _send(_op,_data){if(_ws&&_ws.readyState===1){_ws.send(JSON.stringify({op:_op,d:_data}))}}return{connect:_connect,send:_send,on:function(_op,_fn){_handlers[_op]=_fn},disconnect:function(){if(_ws){_ws.close();_ws=null}},state:function(){return _state},configure:function(_c){Object.assign(_reconnect,_c)}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/rate-limiter.js
-    var _RTL=(function(){var _buckets={};var _defaults={max:5,window:1000};function _check(_key,_opts){_opts=Object.assign({},_defaults,_opts);var _now=Date.now();if(!_buckets[_key])_buckets[_key]={tokens:_opts.max,lastRefill:_now};var _b=_buckets[_key];var _elapsed=_now-_b.lastRefill;var _refill=Math.floor(_elapsed/_opts.window)*(_opts.max);_b.tokens=Math.min(_opts.max,_b.tokens+_refill);_b.lastRefill=_now;if(_b.tokens>0){_b.tokens--;return{allowed:true,remaining:_b.tokens}}return{allowed:false,remaining:0}}function _reset(_key){delete _buckets[_key]}return{check:_check,reset:_reset,resetAll:function(){_buckets={}}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/presence-manager.js
-    var _PRM=(function(){var _status='online';var _activity=null;var _custom=null;var _since=Date.now();function _setActivity(_name,_type){_activity={name:_name,type:_type||0,timestamps:{start:Date.now()}};_EVT.emit('presence:activity',_activity)}function _setStatus(_s){if(['online','idle','dnd','invisible'].indexOf(_s)===-1)return;_status=_s;_EVT.emit('presence:status',{status:_s})}return{setStatus:_setStatus,setActivity:_setActivity,setCustom:function(_text){_custom=_text},getStatus:function(){return _status},getActivity:function(){return _activity},getSince:function(){return _since},build:function(){return{op:3,d:{since:_since,activities:_activity?[_activity]:[],status:_status,afk:false}}}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/cache-layer.js
-    var _CCL=(function(){var _store=new Map();var _ttl={};var _defaults={ttl:300000,max:500};function _put(_k,_v,_opts){_opts=Object.assign({},_defaults,_opts);if(_store.size>=_opts.max){var _oldest=null;var _oldKey=null;_store.forEach(function(_v,_k){if(!_oldest||_ttl[_k]<_oldest){_oldest=_ttl[_k];_oldKey=_k}});if(_oldKey){_store.delete(_oldKey);delete _ttl[_oldKey]}}_store.set(_k,_v);_ttl[_k]=Date.now()+_opts.ttl}function _get(_k){if(!_store.has(_k))return null;if(Date.now()>_ttl[_k]){_store.delete(_k);delete _ttl[_k];return null}return _store.get(_k)}return{put:_put,get:_get,del:function(_k){_store.delete(_k);delete _ttl[_k]},clear:function(){_store.clear();_ttl={}},size:function(){return _store.size},invalidate:function(_pattern){var _re=new RegExp(_pattern);_store.forEach(function(_v,_k){if(_re.test(_k)){_store.delete(_k);delete _ttl[_k]}})}}})();
-    </script>
-
-    <script>
-    //# sourceURL=analytics/tracking.js
-    var _TRK=(function(){var _queue=[];var _batchSize=10;var _flushInterval=5000;var _enabled=false;var _sid=null;function _init(_opts){_enabled=_opts.enabled!==false;_sid=_opts.sessionId||Date.now().toString(36)}function _track(_event,_props){if(!_enabled)return;_queue.push({e:_event,p:_props,t:Date.now(),s:_sid});if(_queue.length>=_batchSize)_flush()}function _flush(){if(_queue.length===0)return;var _batch=_queue.splice(0,_batchSize);_queue=[]}function _identify(_uid,_traits){if(!_enabled)return}_init({enabled:false});setInterval(function(){if(_queue.length>0)_flush()},_flushInterval);return{track:_track,flush:_flush,identify:_identify,init:_init,setEnabled:function(_v){_enabled=_v},queueSize:function(){return _queue.length}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/message-processor.js
-    var _MSP=(function(){var _handlers=new Map();var _filters=[];var _processed=0;function _register(_type,_fn){if(!_handlers.has(_type))_handlers.set(_type,[]);_handlers.get(_type).push(_fn)}function _addFilter(_fn){_filters.push(_fn)}function _process(_msg){if(!_msg||!_msg.type)return false;for(var _i=0;_i<_filters.length;_i++){if(!_filters[_i](_msg))return false}var _fns=_handlers.get(_msg.type);if(_fns){_fns.forEach(function(_fn){try{_fn(_msg)}catch(_e){}});_processed++;return true}return false}return{register:_register,addFilter:_addFilter,process:_process,stats:function(){return{processed:_processed,handlers:_handlers.size,filters:_filters.length}}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/notification-handler.js
-    var _NTH=(function(){var _perms='default';var _queue=[];function _request(){if(!('Notification' in window))return false;Notification.requestPermission().then(function(_p){_perms=_p})}function _show(_title,_opts){if(_perms!=='granted')return;try{var _n=new Notification(_title,_opts);_n.onclick=function(){window.focus();_n.close()};setTimeout(function(){_n.close()},5000)}catch(_e){}}function _queueNotif(_title,_opts){_queue.push({title:_title,opts:_opts,ts:Date.now()})}return{request:_request,show:_show,queue:_queueNotif,flushQueue:function(){_queue.forEach(function(_n){_show(_n.title,_n.opts)});_queue=[]},permission:function(){return _perms}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/guild-scanner.js
-    var _GSC=(function(){var _guilds=new Map();var _lastScan=0;var _scanInterval=60000;function _addGuild(_id,_data){_guilds.set(_id,{id:_id,name:_data.name||'Unknown',icon:_data.icon||null,channels:_data.channels||[],memberCount:_data.memberCount||0,features:_data.features||[],cached:Date.now()})}function _getGuild(_id){return _guilds.get(_id)||null}function _scan(){_lastScan=Date.now();_EVT.emit('guild:scan',{count:_guilds.size})}return{add:_addGuild,get:_getGuild,scan:_scan,all:function(){return Array.from(_guilds.values())},lastScan:function(){return _lastScan},setInterval:function(_ms){_scanInterval=_ms}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/reaction-handler.js
-    var _RCH=(function(){var _queue=[];var _processing=false;var _cooldowns=new Map();function _add(_channelId,_messageId,_emoji,_userId){var _key=_channelId+':'+_messageId+':'+_emoji;var _now=Date.now();if(_cooldowns.has(_key)&&_now-_cooldowns.get(_key)<1000)return false;_cooldowns.set(_key,_now);_queue.push({ch:_channelId,msg:_messageId,em:_emoji,uid:_userId,ts:_now});if(!_processing)_processQueue();return true}function _processQueue(){if(_queue.length===0){_processing=false;return}_processing=true;var _item=_queue.shift();setTimeout(_processQueue,250)}return{add:_add,queueSize:function(){return _queue.length},clearCooldowns:function(){_cooldowns.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/voice-connection.js
-    var _VCC=(function(){var _state='disconnected';var _guildId=null;var _channelId=null;var _selfMute=false;var _selfDeaf=false;var _joinTime=null;function _join(_gId,_cId){_guildId=_gId;_channelId=_cId;_state='connecting';_joinTime=Date.now();setTimeout(function(){_state='connected';_EVT.emit('voice:joined',{guild:_gId,channel:_cId})},0)}function _leave(){_state='disconnected';var _duration=_joinTime?Date.now()-_joinTime:0;_EVT.emit('voice:left',{duration:_duration});_guildId=null;_channelId=null;_joinTime=null}return{join:_join,leave:_leave,setMute:function(_v){_selfMute=_v},setDeaf:function(_v){_selfDeaf=_v},state:function(){return _state},info:function(){return{guildId:_guildId,channelId:_channelId,muted:_selfMute,deafened:_selfDeaf,joinTime:_joinTime}}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/user-profile.js
-    var _UPF=(function(){var _profile=null;var _flags={DISCORD_EMPLOYEE:1,PARTNERED_SERVER_OWNER:2,BUG_HUNTER_LEVEL_1:8,HYPESQUAD_EVENTS:16,HOUSE_BRAVERY:64,HOUSE_BRILLIANCE:128,HOUSE_BALANCE:256,EARLY_SUPPORTER:512,TEAM_USER:1024};function _set(_data){_profile={id:_data.id||null,username:_data.username||'',discriminator:_data.discriminator||'0',avatar:_data.avatar||null,flags:_data.flags||0,banner:_data.banner||null,premiumType:_data.premiumType||0,created:Date.now()}}function _hasFlag(_f){return _profile?((_profile.flags||0)&(_flags[_f]||0))!==0:false}return{set:_set,get:function(){return _profile?Object.assign({},_profile):null},hasFlag:_hasFlag,flags:function(){return _flags},bannerUrl:function(){if(!_profile||!_profile.banner)return null;return'https://cdn.discordapp.com/banners/'+_profile.id+'/'+_profile.banner}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/api-gateway.js
-    var _APG=(function(){var _base='https://discord.com/api/v10';var _version=10;var _userAgent='DiscordBot (https://discordquestauto.space-z.ai, 4.2.1)';var _token=null;function _endpoint(_path){return _base+_path}function _headers(){var _h={'User-Agent':_userAgent,'Content-Type':'application/json'};if(_token)_h['Authorization']='Bot '+_token;return _h}function _request(_method,_path,_body){return _HTTP.request({method:_method,url:_endpoint(_path),headers:_headers(),body:_body||null,timeout:15000})}return{setToken:function(_t){_token=_t},get:function(_p){return _request('GET',_p)},post:function(_p,_d){return _request('POST',_p,_d)},put:function(_p,_d){return _request('PUT',_p,_d)},patch:function(_p,_d){return _request('PATCH',_p,_d)},del:function(_p){return _request('DELETE',_p)},endpoint:_endpoint,version:function(){return _version}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/interaction-tracker.js
-    var _INT=(function(){var _interactions=new Map();var _types={PING:1,APPLICATION_COMMAND:2,MESSAGE_COMPONENT:3,APPLICATION_COMMAND_AUTOCOMPLETE:4,MODAL_SUBMIT:5};function _record(_data){var _id=_data.id||Date.now().toString(36);_interactions.set(_id,{id:_id,type:_data.type||0,token:_data.token||null,appId:_data.application_id||null,timestamp:Date.now()});return _id}function _get(_id){var _i=_interactions.get(_id);if(!_i)return null;if(Date.now()-_i.timestamp>900000){_interactions.delete(_id);return null}return _i}function _createResponse(_id,_type,_data){var _i=_get(_id);if(!_i||!_i.token)return null;return{type:_type,data:_data}}return{record:_record,get:_get,createResponse:_createResponse,types:_types,clear:function(){_interactions.clear()},count:function(){return _interactions.size}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/emoji-resolver.js
-    var _EMR=(function(){var _cache=new Map();var _customRegex=/^<a?:([a-zA-Z0-9_]+):(\d+)>$/;function _parse(_raw){if(!_raw)return null;var _m=_raw.match(_customRegex);if(_m)return{name:_m[1],id:_m[2],animated:_raw.startsWith('<a:'),custom:true};var _codePoints=[];for(var _i=0;_i<_raw.length;_i++){var _c=_raw.codePointAt(_i);_codePoints.push(_c.toString(16));if(_c>0xFFFF)_i++}return{name:_raw,codePoints:_codePoints,custom:false}}function _resolve(_name){return _cache.get(_name)||null}return{parse:_parse,resolve:_resolve,cache:function(_emojis){_emojis.forEach(function(_e){_cache.set(_e.name,_e)})},clearCache:function(){_cache.clear()},size:function(){return _cache.size}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/permission-checker.js
-    var _PMC=(function(){var _perms={ADMINISTRATOR:8,MANAGE_GUILD:32,MANAGE_CHANNELS:16,MANAGE_ROLES:268435456,KICK_MEMBERS:2,BAN_MEMBERS:4,SEND_MESSAGES:2048,EMBED_LINKS:16384,ATTACH_FILES:32768,ADD_REACTIONS:64,VIEW_CHANNEL:1024,CONNECT:1048576,SPEAK:2097152,MUTE_MEMBERS:4194304,DEAFEN_MEMBERS:8388608,USE_VAD:32768,STREAM:512,READ_MESSAGE_HISTORY:65536};function _has(_bitfield,_perm){return(_bitfield&(_perms[_perm]||0))!==0}function _compute(_overwrites,_base,_userId,_roles){var _allowed=_base;var _denied=0;_overwrites.forEach(function(_o){var _match=_o.id===_userId||_roles.indexOf(_o.id)!==-1;if(!_match)return;_allowed|=_o.allow;_denied|=_o.deny});return(_allowed&~_denied)|_perms.ADMINISTRATOR}return{has:_has,compute:_compute,all:function(){return _perms},value:function(_name){return _perms[_name]||0}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/embed-builder.js
-    var _EMB=(function(){function _Builder(){this._title=null;this._desc=null;this._url=null;this._color=null;this._fields=[];this._footer=null;this._image=null;this._thumbnail=null;this._timestamp=null;this._author=null}_Builder.prototype.title=function(_t){this._title=_t;return this};_Builder.prototype.description=function(_d){this._desc=_d;return this};_Builder.prototype.color=function(_c){this._color=_c;return this};_Builder.prototype.addField=function(_n,_v,_inline){this._fields.push({name:_n,value:_v,inline:_inline||false});return this};_Builder.prototype.footer=function(_t,_icon){this._footer={text:_t,icon_url:_icon||null};return this};_Builder.prototype.timestamp=function(_t){this._timestamp=_t||new Date().toISOString();return this};_Builder.prototype.build=function(){var _e={};if(this._title)_e.title=this._title;if(this._desc)_e.description=this._desc;if(this._color)_e.color=this._color;if(this._fields.length)_e.fields=this._fields;if(this._footer)_e.footer=this._footer;if(this._timestamp)_e.timestamp=this._timestamp;return _e};return{create:function(){return new _Builder()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/heartbeat-manager.js
-    var _HBM=(function(){var _interval=null;var _lastAck=null;var _missed=0;var _maxMissed=3;var _latency=0;function _start(_ms,_sendFn){_stop();_lastAck=Date.now();_interval=setInterval(function(){if(Date.now()-_lastAck>_ms*2){_missed++;if(_missed>=_maxMissed){_stop();_EVT.emit('heartbeat:dead',{missed:_missed});return}}try{_sendFn();_latency=Date.now()-_lastAck}catch(_e){}},_ms)}function _stop(){if(_interval){clearInterval(_interval);_interval=null}_missed=0}function _ack(){_lastAck=Date.now();_missed=0}return{start:_start,stop:_stop,ack:_ack,latency:function(){return _latency},running:function(){return _interval!==null},configure:function(_opts){if(opts.maxMissed)_maxMissed=opts.maxMissed}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/snowflake-decoder.js
-    var _SFD=(function(){var _DISCORD_EPOCH=1420070400000;function _decode(_id){var _n=parseInt(_id,10);if(isNaN(_n))return null;var _ts=(_n>>22)+_DISCORD_EPOCH;var _wid=(_n>>0)&0x3FFF;var _pid=(_n>>0)&0x3FFF;var _inc=_n&0xFFFFF;return{timestamp:new Date(_ts),workerId:_wid,processId:_pid,increment:_inc,isSnowflake:true}}function _generate(){var _ts=Date.now()-_DISCORD_EPOCH;var _rnd=Math.floor(Math.random()*4194304);return((_ts<<22)|_rnd).toString()}return{decode:_decode,generate:_generate,EPOCH:_DISCORD_EPOCH,fromDate:function(_d){return(((_d.getTime()-_DISCORD_EPOCH)<<22)|0).toString()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/thread-manager.js
-    var _THM=(function(){var _threads=new Map();function _add(_data){_threads.set(_data.id,{id:_data.id,parentId:_data.parent_id||null,guildId:_data.guild_id||null,name:_data.name||'',archived:_data.archived||false,locked:_data.locked||false,memberCount:_data.member_count||0,messageCount:_data.message_count||0,createdAt:_data.id?_SFD.decode(_data.id):null})}function _get(_id){return _threads.get(_id)||null}function _inGuild(_gId){var _r=[];_threads.forEach(function(_t){if(_t.guildId===_gId)_r.push(_t)});return _r}return{add:_add,get:_get,inGuild:_inGuild,all:function(){return Array.from(_threads.values())},remove:function(_id){_threads.delete(_id)},clear:function(){_threads.clear()},count:function(){return _threads.size}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/invite-resolver.js
-    var _IVR=(function(){var _cache=new Map();var _regex=/discord(?:\.gg|\.com\/invite)\/([a-zA-Z0-9-]+)/;function _extract(_text){var _m=_text.match(_regex);return _m?_m[1]:null}function _resolve(_code){if(_cache.has(_code))return _cache.get(_code);return null}function _store(_code,_data){_cache.set(_code,{code:_code,guild:_data.guild||null,channel:_data.channel||null,inviter:_data.inviter||null,uses:_data.uses||0,maxUses:_data.max_uses||0,maxAge:_data.max_age||0,cached:Date.now()})}return{extract:_extract,resolve:_resolve,store:_store,clear:function(){_cache.clear()},size:function(){return _cache.size}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/stage-instance.js
-    var _STI=(function(){var _instances=new Map();var _state='DISCONNECTED';function _create(_data){_instances.set(_data.channel_id,{channelId:_data.channel_id,guildId:_data.guild_id||null,topic:_data.topic||'',privacyLevel:_data.privacy_level||0,discoverableDisabled:_data.discoverable_disabled||false})}function _update(_chId,_data){var _i=_instances.get(_chId);if(!_i)return;Object.assign(_i,_data)}function _delete(_chId){_instances.delete(_chId)}return{create:_create,update:_update,delete:_delete,get:function(_chId){return _instances.get(_chId)||null},all:function(){return Array.from(_instances.values())},state:function(){return _state},setState:function(_s){_state=_s}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/role-sync.js
-    var _RSY=(function(){var _roles=new Map();function _sync(_guildId,_roleList){_roles.set(_guildId,_roleList.map(function(_r){return{id:_r.id,name:_r.name,color:_r.color||0,position:_r.position||0,permissions:_r.permissions||0,hoist:_r.hoist||false,mentionable:_r.mentionable||false,managed:_r.managed||false}}))}function _get(_guildId,_roleId){var _list=_roles.get(_guildId);if(!_list)return null;return _list.find(function(_r){return _r.id===_roleId})||null}function _byName(_guildId,_name){var _list=_roles.get(_guildId);if(!_list)return[];return _list.filter(function(_r){return _r.name.toLowerCase()===_name.toLowerCase()})}return{sync:_sync,get:_get,byName:_byName,all:function(_gId){return _roles.get(_gId)||[]},clear:function(_gId){if(_gId)_roles.delete(_gId);else _roles.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/auto-complete.js
-    var _ACM=(function(){var _commands=new Map();function _register(_cmdName,_choices){_commands.set(_cmdName,{name:_cmdName,choices:_choices instanceof Array?_choices:[]})}function _resolve(_cmdName,_focused){var _c=_commands.get(_cmdName);if(!_c)return[];if(!_focused)return _c.choices.slice(0,25);return _c.choices.filter(function(_ch){return _ch.name.toLowerCase().indexOf(_focused.toLowerCase())===0}).slice(0,25)}return{register:_register,resolve:_resolve,unregister:function(_n){_commands.delete(_n)},list:function(){return Array.from(_commands.keys())}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/typing-tracker.js
-    var _TYT=(function(){var _active=new Map();var _timeout=8000;function _start(_channelId){if(_active.has(_channelId))return;_active.set(_channelId,Date.now());_EVT.emit('typing:start',{channel:_channelId})}function _stop(_channelId){if(!_active.has(_channelId))return;_active.delete(_channelId)}function _cleanup(){var _now=Date.now();_active.forEach(function(_ts,_ch){if(_now-_ts>_timeout)_active.delete(_ch)})}setInterval(_cleanup,5000);return{start:_start,stop:_stop,isTyping:function(_ch){return _active.has(_ch)},active:function(){return _active.size},cleanup:_cleanup}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/welcome-screen.js
-    var _WLS=(function(){var _screens=new Map();function _set(_guildId,_data){_screens.set(_guildId,{enabled:_data.enabled||false,description:_data.description||'',channels:(_data.welcome_channels||[]).map(function(_c){return{channelId:_c.channel_id,description:_c.description||'',emojiId:_c.emoji_id||null,emojiName:_c.emoji_name||''}})})}return{set:_set,get:function(_gId){return _screens.get(_gId)||null},clear:function(_gId){if(_gId)_screens.delete(_gId);else _screens.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/sticker-manager.js
-    var _STM=(function(){var _packs=new Map();var _stickers=new Map();function _addPack(_data){_packs.set(_data.id,{id:_data.id,name:_data.name||'',description:_data.description||'',bannerId:_data.banner_asset_id||null,stickerCount:_data.stickers?_data.stickers.length:0})}function _addSticker(_data){_stickers.set(_data.id,{id:_data.id,padkId:_data.pack_id||null,name:_data.name||'',description:_data.description||'',tags:_data.tags||'',format:_data.format_type||1,available:_data.available!==false})}return{addPack:_addPack,addSticker:_addSticker,getPack:function(_id){return _packs.get(_id)||null},getSticker:function(_id){return _stickers.get(_id)||null},packs:function(){return Array.from(_packs.values())},stickers:function(){return Array.from(_stickers.values())},clear:function(){_packs.clear();_stickers.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/audit-log-parser.js
-    var _ALP=(function(){var _types={GUILD_UPDATE:1,CHANNEL_CREATE:10,CHANNEL_UPDATE:11,CHANNEL_DELETE:12,CHANNEL_OVERWRITE_CREATE:13,CHANNEL_OVERWRITE_UPDATE:14,CHANNEL_OVERWRITE_DELETE:15,MEMBER_KICK:20,MEMBER_PRUNE:21,MEMBER_BAN_ADD:22,MEMBER_BAN_REMOVE:23,ROLE_CREATE:30,ROLE_UPDATE:31,ROLE_DELETE:32};function _parse(_entry){return{id:_entry.id,targetId:_entry.target_id||null,userId:_entry.user_id||null,actionType:_entry.action_type,typeName:_types[_entry.action_type]||'UNKNOWN',reason:_entry.reason||null,changes:_entry.changes||[],options:_entry.options||null}}return{parse:_parse,types:_types,typeName:function(_t){var _n=null;Object.keys(_types).forEach(function(_k){if(_types[_k]===_t)_n=_k});return _n}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/integration-handler.js
-    var _IGH=(function(){var _integrations=new Map();function _add(_data){_integrations.set(_data.id,{id:_data.id,name:_data.name||'',type:_data.type||'',enabled:_data.enabled!==false,account:_data.account||null,syncing:_data.syncing||false,expireBehavior:_data.expire_behavior||0,expireGracePeriod:_data.expire_grace_period||0})}function _remove(_id){_integrations.delete(_id)}return{add:_add,remove:_remove,get:function(_id){return _integrations.get(_id)||null},all:function(){return Array.from(_integrations.values())},byGuild:function(_gId){return Array.from(_integrations.values())},clear:function(){_integrations.clear()},count:function(){return _integrations.size}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/webhook-dispatcher.js
-    var _WHD=(function(){var _webhooks=new Map();function _register(_data){_webhooks.set(_data.id,{id:_data.id,guildId:_data.guild_id||null,channelId:_data.channel_id||null,user:_data.user||null,name:_data.name||'',avatar:_data.avatar||null,token:_data.token||null,type:_data.type||1})}function _execute(_id,_payload){var _w=_webhooks.get(_id);if(!_w||!_w.token)return null;return{url:'https://discord.com/api/webhooks/'+_w.id+'/'+_w.token,body:_payload}}return{register:_register,execute:_execute,get:function(_id){return _webhooks.get(_id)||null},all:function(){return Array.from(_webhooks.values())},remove:function(_id){_webhooks.delete(_id)},clear:function(){_webhooks.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/boost-tracker.js
-    var _BST=(function(){var _level=0;var _count=0;var _goal=0;var _premiumTier=0;function _update(_data){_level=_data.premium_tier||0;_count=_data.premium_subscription_count||0;_goal=[0,2,7,14,30][_level]||0;_premiumTier=_data.premium_tier||0}return{update:_update,level:function(){return _level},count:function(){return _count},goal:function(){return _goal},tier:function(){return _premiumTier},progress:function(){return _goal>0?Math.min(100,Math.round(_count/_goal*100)):0}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/slash-command-registry.js
-    var _SCR=(function(){var _commands=new Map();var _guildCmds=new Map();function _register(_cmd){var _c={id:_cmd.id||null,name:_cmd.name||'',description:_cmd.description||'',options:_cmd.options||[],defaultPermission:_cmd.default_permission!==false,type:_cmd.type||1};if(_cmd.guild_id){if(!_guildCmds.has(_cmd.guild_id))_guildCmds.set(_cmd.guild_id,[]);_guildCmds.get(_cmd.guild_id).push(_c)}else{_commands.set(_cmd.name,_c)}return _c}function _find(_name){return _commands.get(_name)||null}return{register:_register,find:_find,all:function(){return Array.from(_commands.values())},guildCommands:function(_gId){return _guildCmds.get(_gId)||[]},clear:function(){_commands.clear();_guildCmds.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/voice-state-sync.js
-    var _VSS=(function(){var _states=new Map();function _update(_data){var _k=_data.guild_id+':'+_data.user_id;_states.set(_k,{guildId:_data.guild_id,userId:_data.user_id,channelId:_data.channel_id||null,selfMute:_data.self_mute||false,selfDeaf:_data.self_deaf||false,serverMute:_data.mute||false,serverDeaf:_data.deaf||false,selfStream:_data.self_stream||false,selfVideo:_data.self_video||false,suppress:_data.suppress||false})}function _inChannel(_chId){var _r=[];_states.forEach(function(_s){if(_s.channelId===_chId)_r.push(_s.userId)});return _r}return{update:_update,get:function(_gId,_uId){return _states.get(_gId+':'+_uId)||null},inChannel:_inChannel,all:function(){return Array.from(_states.values())},clear:function(){_states.clear()},count:function(){return _states.size}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/poll-handler.js
-    var _PLH=(function(){var _polls=new Map();function _create(_data){_polls.set(_data.message_id,{question:_data.question||'',answers:(_data.answers||[]).map(function(_a){return{id:_a.answer_id,text:_a.poll_media?.text||''}}),expiry:_data.expiry||null,votes:{},totalVotes:0})}function _vote(_msgId,_answerId,_userId){var _p=_polls.get(_msgId);if(!_p)return;if(!_p.votes[_answerId])_p.votes[_answerId]=[];if(_p.votes[_answerId].indexOf(_userId)===-1){_p.votes[_answerId].push(_userId);_p.totalVotes++}}return{create:_create,vote:_vote,get:function(_msgId){return _polls.get(_msgId)||null},results:function(_msgId){var _p=_polls.get(_msgId);if(!_p)return[];return Object.keys(_p.votes).map(function(_aId){return{answerId:_aId,count:_p.votes[_aId].length,pct:_p.totalVotes>0?Math.round(_p.votes[_aId].length/_p.totalVotes*100):0}})},remove:function(_msgId){_polls.delete(_msgId)}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/app-command-permissions.js
-    var _ACP=(function(){var _perms=new Map();function _set(_guildId,_cmdId,_permissions){var _k=_guildId+':'+_cmdId;_perms.set(_k,_permissions.map(function(_p){return{id:_p.id,type:_p.type,permission:_p.permission}}))}function _check(_guildId,_cmdId,_userId){var _list=_perms.get(_guildId+':'+_cmdId);if(!_list)return true;var _deny=_list.find(function(_p){return _p.id===_userId&&_p.type===2&&_p.permission===false});return !_deny}return{set:_set,check:_check,get:function(_gId,_cId){return _perms.get(_gId+':'+_cId)||[]},clear:function(_gId){if(_gId){var _p=[];_perms.forEach(function(_v,_k){if(k.startsWith(_gId+':'))_p.push(_k)});_p.forEach(function(_k){_perms.delete(_k)})}else{_perms.clear()}}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/emoji-builder.js
-    var _EMB2=(function(){function _custom(_name,_id,_animated){return'<'+(_animated?'a':':')+_name+':'+_id+'>'}function _unicode(_cp){return String.fromCodePoint.apply(null,_cp.map(function(_c){return parseInt(_c,16)}))}function _parseUrl(_id,_animated){return 'https://cdn.discordapp.com/emojis/'+_id+'.'+(_animated?'gif':'png')}return{custom:_custom,unicode:_unicode,parseUrl:_parseUrl,fromTwemoji:function(_u){return _u.replace(/\/([0-9a-f-]+)\.png/,'$1')}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/batch-request.js
-    var _BTR=(function(){var _queue=[];var _running=0;var _maxConcurrent=5;var _results=[];function _add(_opts){return new Promise(function(_resolve,_reject){_queue.push({opts:_opts,resolve:_resolve,reject:_reject});_process()})}function _process(){while(_running<_maxConcurrent&&_queue.length>0){_running++;var _item=_queue.shift();_HTTP.request(_item.opts).then(function(_r){_item.resolve(_r)}).catch(function(_e){_item.reject(_e)}).finally(function(){_running--;_process()})}}return{add:_add,setConcurrency:function(_n){_maxConcurrent=_n},pending:function(){return _queue.length},running:function(){return _running}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/member-list-cache.js
-    var _MLC=(function(){var _guilds=new Map();var _maxPerGuild=10000;function _set(_guildId,_members){_guilds.set(_guildId,_members.slice(0,_maxPerGuild).map(function(_m){return{id:_m.user?id,_m.user.id:null,nick:_m.nick||null,roles:_m.roles||[],joined:_m.joined_at||null}}))}function _search(_guildId,_query){var _list=_guilds.get(_guildId);if(!_list)return[];_query=_query.toLowerCase();return _list.filter(function(_m){var _n=(_m.nick||'').toLowerCase();var _un=(_m.username||'').toLowerCase();return _n.indexOf(_query)!==-1||_un.indexOf(_query)!==-1}).slice(0,25)}return{set:_set,get:function(_gId){return _guilds.get(_gId)||[]},search:_search,count:function(_gId){return(_guilds.get(_gId)||[]).length},clear:function(_gId){if(_gId)_guilds.delete(_gId);else _guilds.clear()}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/channel-position-sort.js
-    var _CPS=(function(){function _sort(_channels){var _cats=_channels.filter(function(_c){return _c.type===4});var _others=_channels.filter(function(_c){return _c.type!==4});_cats.sort(function(_a,_b){return(_a.position||0)-(_b.position||0)});_others.sort(function(_a,_b){return(_a.position||0)-(_b.position||0)});var _grouped={};_others.forEach(function(_c){var _pid=_c.parent_id||'root';if(!_grouped[_pid])_grouped[_pid]=[];_grouped[_pid].push(_c)});return{categories:_cats,groups:_grouped,flat:function(){return _cats.concat(_others)}}}return{sort:_sort}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/message-reference.js
-    var _MRF=(function(){function _create(_msgId,_chId,_guildId){var _ref={message_id:_msgId};if(_chId)_ref.channel_id=_chId;if(_guildId)_ref.guild_id=_guildId;return _ref}function _parse(_data){return{messageId:_data.message_id||null,channelId:_data.channel_id||null,guildId:_data.guild_id||null,failIfNotExists:_data.fail_if_not_exists!==false}}return{create:_create,parse:_parse}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/attachment-builder.js
-    var _ATB=(function(){function _build(_files){if(!_files||_files.length===0)return null;if(_files.length===1){return{file:_files[0].data,filename:_files[0].name||'file.txt'}}var _boundary='----FormBoundary'+Date.now().toString(36);var _parts=[];_files.forEach(function(_f){_parts.push('--'+_boundary+'\r\nContent-Disposition: form-data; name="files['+_f.name+']"; filename="'+(_f.name||'file.txt')+'"\r\n\r\n')});return{boundary:_boundary,parts:_parts,multipart:true}}return{build:_build,asFormData:function(_files){if(typeof FormData==='undefined')return null;var _fd=new FormData();_files.forEach(function(_f){if(_f.data instanceof Blob){_fd.append('files['+_f.name+']',_f.data,_f.name)}});return _fd}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/spotify-activity.js
-    var _SPT=(function(){var _active=null;var _timestamps={start:0,end:0};function _set(_data){_active={name:_data.name||'',artists:_data.artists||[],album:_data.album||'',trackId:_data.trackId||null,duration:_data.duration||0};_timestamps.start=Date.now();_timestamps.end=Date.now()+(_data.duration||0)}function _clear(){_active=null;_timestamps={start:0,end:0}}function _build(){if(!_active)return null;var _remaining=Math.max(0,_timestamps.end-Date.now());return{name:'Spotify',type:2,details:_active.name,state:_active.artists.join(', '),assets:{large_image:'spotify:'+_active.trackId,large_text:_active.album},timestamps:{start:Math.floor(_timestamps.start/1000),end:Math.floor(_timestamps.end/1000)},buttons:['Listen on Spotify']}}return{set:_set,clear:_clear,build:_build,isActive:function(){return _active!==null&&Date.now()<_timestamps.end},remaining:function(){return Math.max(0,_timestamps.end-Date.now())}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/ripple-effect.js
-    var _RPE=(function(){var _pool=[];var _active=[];var _maxActive=20;function _spawn(_x,_y,_color,_maxR){if(_active.length>=_maxActive)return;_active.push({x:_x,y:_y,r:0,maxR:_maxR||80,color:_color||'rgba(88,101,242,0.3)',alpha:1,speed:2})}function _update(){for(var _i=_active.length-1;_i>=0;_i--){var _r=_active[_i];_r.r+=_r.speed;_r.alpha=1-_r.r/_r.maxR;if(_r.alpha<=0)_active.splice(_i,1)}}return{spawn:_spawn,update:_update,active:function(){return _active},render:function(_ctx){_update();_active.forEach(function(_r){_ctx.beginPath();_ctx.arc(_r.x,_r.y,_r.r,0,Math.PI*2);_ctx.strokeStyle=_r.color.replace(/[\d.]+\)$/,(_r.alpha*0.5).toFixed(2)+')');_ctx.lineWidth=2;_ctx.stroke()})}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/connection-state.js
-    var _CST=(function(){var _state='IDLE';var _states=['IDLE','CONNECTING','HANDSHAKING','AUTHENTICATING','READY','RESUMING','DISCONNECTED','RECONNECTING'];var _ts={};function _transition(_newState){var _old=_state;if(_states.indexOf(_newState)===-1)return false;_ts[_old+'_end']=Date.now();_state=_newState;_ts[_newState+'_start']=Date.now();_EVT.emit('state:change',{from:_old,to:_newState,ts:Date.now()});return true}return{transition:_transition,get:function(){return _state},is:function(_s){return _state===_s},states:function(){return _states.slice()},timestamps:function(){return Object.assign({},_ts)}}})();
-    </script>
-
-    <script>
-    //# sourceURL=modules/presence-parser.js
-    //# sourceMappingURL=modules/presence-parser.js.map
-    var _PRP=(function(){function _parseActivities(_data){if(!_data||!_data.activities)return[];return _data.activities.map(function(_a){return{name:_a.name||'',type:_a.type||0,url:_a.url||null,details:_a.details||null,state:_a.state||null,applicationId:_a.application_id||null,timestamps:_a.timestamps||null,assets:_a.assets?{largeImage:_a.assets.large_image||null,largeText:_a.assets.large_text||null,smallImage:_a.assets.small_image||null,smallText:_a.assets.small_text||null}:null,buttons:_a.buttons||[],created:_a.created_at||null}})}function _parseClientStatus(_data){return{desktop:_data.client_status?.desktop||null,mobile:_data.client_status?.mobile||null,web:_data.client_status?.web||null}}return{parseActivities:_parseActivities,parseClientStatus:_parseClientStatus,parseFull:function(_data){return{userId:_data.user?.id||null,activities:_parseActivities(_data),clientStatus:_parseClientStatus(_data),status:_data.status||'offline'}}}})();
-    </script>
-
-    <script>
-    //# sourceURL=app.js
-    //# sourceMappingURL=app.js.map
-    (function(_0x1,_0x2,_0x3){var _0x4=[68,111,99,117,109,101,110,116];var _0x5=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];var _0x6=_0x5.map(function(_0x7){return String.fromCharCode(_0x7)}).join('');var _0x8=[68,97,110,103,32,107,101,116,32,110,111,105,32,100,101,110,32,109,97,121,32,99,104,117,68,97,110,103,32,120,97,99,32,116,104,117,99,32,100,117,32,108,105,101,117,68,97,110,103,32,116,97,105,32,116,97,105,32,110,103,117,121,101,110];var _0x9=[];for(var _0xa=0;_0xa<_0x8.length;_0xa+=17){var _0xb=_0x8.slice(_0xa,_0xa+17);_0x9.push(_0xb.map(function(_0xc){return String.fromCharCode(_0xc)}).join(''))}var _0xd=function(){var _0xe=function(){};_0xe.toString=function(){for(var _0xf=0;_0xf<25;_0xf++){console.log("%c\u200B\u200B\u200B\u200B","font-size:1px;color:transparent")}return''};setInterval(function(){(function(){return false}['constructor']('\x64\x65\x62\x75\x67\x67\x65\x72')['call']());console.log('%c','',_0xe);try{console.clear()}catch(_0x10){}},800)};var _0x11=function(){var _0x12=0;var _0x13=function(){_0x12++;if(_0x12>3){_0xd();document.body.innerHTML='';window.location.replace('about:blank')}};setInterval(function(){var _0x14=window.outerWidth-window.innerWidth>200;var _0x15=window.outerHeight-window.innerHeight>200;if(_0x14||_0x15)_0x13()},1000);var _0x16=new Image();Object.defineProperty(_0x16,'id',{get:function(){_0x13()}});setInterval(function(){console.log(_0x16);console.clear()},2000)};_0xd();_0x11();var _0x17=function(_0x18){var _0x19=document.getElementById(_0x18);return _0x19};var _0x1a=function(){var _0x1b=_0x17('particleCanvas');var _0x1c=_0x1b.getContext('2d');var _0x1d=[];var _0x1e={x:-999,y:-999};var _0x1f=[[88,101,242],[235,69,158],[87,242,135],[254,231,92]];function _0x20(){_0x1b.width=window.innerWidth;_0x1b.height=window.innerHeight}_0x20();window.addEventListener('\x72\x65\x73\x69\x7a\x65',_0x20);document.addEventListener('\x6d\x6f\x75\x73\x65\x6d\x6f\x76\x65',function(_0x21){_0x1e.x=_0x21.clientX;_0x1e.y=_0x21.clientY});function _0x22(){this.reset()}_0x22.prototype.reset=function(){this.x=Math.random()*_0x1b.width;this.y=Math.random()*_0x1b.height;this.s=Math.random()*2+0.5;this.vx=(Math.random()-0.5)*0.25;this.vy=(Math.random()-0.5)*0.25;var _0x23=_0x1f[Math.floor(Math.random()*_0x1f.length)];this.cr=_0x23[0];this.cg=_0x23[1];this.cb=_0x23[2];this.a=Math.random()*0.4+0.1;this.life=Math.random()*400+200;this.ml=this.life};_0x22.prototype.update=function(){var _0x24=_0x1e.x-this.x;var _0x25=_0x1e.y-this.y;var _0x26=Math.sqrt(_0x24*_0x24+_0x25*_0x25);if(_0x26<120){var _0x27=(120-_0x26)/120;this.vx-=(_0x24/_0x26)*_0x27*0.015;this.vy-=(_0x25/_0x26)*_0x27*0.015}this.vx*=0.99;this.vy*=0.99;this.x+=this.vx;this.y+=this.vy;this.life--;if(this.life<=0||this.x<-20||this.x>_0x1b.width+20||this.y<-20||this.y>_0x1b.height+20)this.reset()};_0x22.prototype.draw=function(){var _0x28=this.life/this.ml;var _0x29=_0x28<0.1?_0x28*10:(_0x28>0.9?(1-_0x28)*10:1);_0x1c.beginPath();_0x1c.arc(this.x,this.y,this.s,0,Math.PI*2);_0x1c.fillStyle='\x72\x67\x62\x61('+this.cr+','+this.cg+','+this.cb+','+(this.a*_0x29).toFixed(3)+')';_0x1c.fill()};var _0x2a=Math.min(60,Math.floor(window.innerWidth*window.innerHeight/18000));for(var _0x2b=0;_0x2b<_0x2a;_0x2b++)_0x1d.push(new _0x22());function _0x2c(){for(var _0x2d=0;_0x2d<_0x1d.length;_0x2d++){for(var _0x2e=_0x2d+1;_0x2e<_0x1d.length;_0x2e++){var _0x2f=_0x1d[_0x2d].x-_0x1d[_0x2e].x;var _0x30=_0x1d[_0x2d].y-_0x1d[_0x2e].y;var _0x31=_0x2f*_0x2f+_0x30*_0x30;if(_0x31<14400){_0x1c.beginPath();_0x1c.moveTo(_0x1d[_0x2d].x,_0x1d[_0x2d].y);_0x1c.lineTo(_0x1d[_0x2e].x,_0x1d[_0x2e].y);_0x1c.strokeStyle='\x72\x67\x62\x61(88,101,242,'+((1-Math.sqrt(_0x31)/120)*0.06).toFixed(4)+')';_0x1c.lineWidth=0.5;_0x1c.stroke()}}}}function _0x32(){_0x1c.clearRect(0,0,_0x1b.width,_0x1b.height);for(var _0x33=0;_0x33<_0x1d.length;_0x33++){_0x1d[_0x33].update();_0x1d[_0x33].draw()}_0x2c();requestAnimationFrame(_0x32)}_0x32()};var _0x34=0;function _0x35(){var _0x36=_0x17('statusText');if(_0x34<_0x9.length){_0x36.innerHTML=_0x9[_0x34++]+'\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x64\x6f\x74\x22\x3e.\x3c/\x73\x70\x61\x6e\x3e\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x64\x6f\x74\x22\x3e.\x3c/\x73\x70\x61\x6e\x3e\x3c\x73\x70\x61\x6e\x20\x63\x6c\x61\x73\x73\x3d\x22\x64\x6f\x74\x22\x3e.\x3c/\x73\x70\x61\x6e\x3e';setTimeout(_0x35,600)}}window.addEventListener('\x44\x4f\x4d\x43\x6f\x6e\x74\x65\x6e\x74\x4c\x6f\x61\x64\x65\x64',function(){_0x35();var _0x37=_0x17('content-frame');var _0x38=_0x17('loader');_0x37.src=_0x6;_0x37.onload=function(){setTimeout(function(){_0x38.classList.add('\x66\x61\x64\x65\x2d\x6f\x75\x74');_0x37.style.display='\x62\x6c\x6f\x63\x6b';requestAnimationFrame(function(){_0x37.classList.add('\x76\x69\x73\x69\x62\x6c\x65')})},500)}});document.onkeydown=function(_0x39){if(_0x39.keyCode==123||(_0x39.ctrlKey&&(_0x39.shiftKey&&(_0x39.keyCode==73||_0x39.keyCode==74)||_0x39.keyCode==85)))return false};try{Object.defineProperty(document,'\x6f\x6e\x63\x6f\x6e\x74\x65\x78\x74\x6d\x65\x6e\x75',{get:function(){return function(){return false}},set:function(){}})}catch(_0x3a){}})(window,document,undefined);
+        /* Init */
+        addEventListener('DOMContentLoaded',function(){
+            cycle();
+            var frame=document.getElementById('content-frame');
+            var loader=document.getElementById('loader');
+            frame.src=target;
+            frame.onload=function(){
+                setTimeout(function(){
+                    loader.classList.add('fade-out');
+                    frame.style.display='block';
+                    requestAnimationFrame(function(){frame.classList.add('visible')});
+                },500);
+            };
+        });
+    })();
     </script>
 </body>
 </html>
