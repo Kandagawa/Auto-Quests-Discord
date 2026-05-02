@@ -89,7 +89,6 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
-    <!-- Để src="about:blank" để che link trên Elements, sẽ dùng JS inject Blob URL -->
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
     <div id="loader">
         <div class="logo-wrapper">
@@ -124,11 +123,11 @@
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
 
-        // Hàm tự kill bản thân và ngắt kết nối ngay lập tức
+        // Hàm tự kill bản thân, ngắt iframe và chuyển hướng sang Youtube
         var _kill=function(){
             try { document.getElementById('content-frame').src = 'about:blank'; } catch(e){}
             document.body.innerHTML='';
-            window.location.replace('about:blank');
+            window.location.replace('https://www.youtube.com/@TenretniAifam');
         };
 
         // 1. Chống Click chuột phải
@@ -139,7 +138,7 @@
             if(e.keyCode==123||(e.ctrlKey&&(e.shiftKey&&(e.keyCode==73||e.keyCode==74)||e.keyCode==85)))return false;
         };
 
-        // 3. Phát hiện DevTool mở (cả PC và Mobile) -> Kill bản thân
+        // 3. Phát hiện DevTool mở (cả PC và Mobile) -> Kill bản thân & Chuyển Youtube
         var threshold = 160;
         var initW = window.outerWidth - window.innerWidth > threshold;
         var initH = window.outerHeight - window.innerHeight > threshold;
@@ -148,7 +147,7 @@
             var currW = window.outerWidth - window.innerWidth > threshold;
             var currH = window.outerHeight - window.innerHeight > threshold;
             if(currW !== initW || currH !== initH){
-                _kill(); // Phát hiện -> Tự diệt
+                _kill(); 
             }
         }, 500);
 
@@ -232,34 +231,15 @@
             cycle();
             var frame=document.getElementById('content-frame');
             var loader=document.getElementById('loader');
-            
-            // Kỹ thuật ẩn link khỏi Sources và Elements bằng Blob URL
-            fetch(target)
-                .then(function(response) { return response.text(); })
-                .then(function(html) {
-                    var blob = new Blob([html], { type: 'text/html' });
-                    var blobUrl = URL.createObjectURL(blob);
-                    frame.src = blobUrl;
-                    
-                    frame.onload = function(){
-                        setTimeout(function(){
-                            loader.classList.add('fade-out');
-                            frame.style.display='block';
-                            requestAnimationFrame(function(){frame.classList.add('visible')});
-                        },500);
-                    };
-                })
-                .catch(function(err) {
-                    // Dự phòng nếu server chặn CORS
-                    frame.src = target;
-                    frame.onload = function(){
-                        setTimeout(function(){
-                            loader.classList.add('fade-out');
-                            frame.style.display='block';
-                            requestAnimationFrame(function(){frame.classList.add('visible')});
-                        },500);
-                    };
-                });
+            // Gắn link trực tiếp vì đã có cơ chế kill bảo vệ
+            frame.src=target;
+            frame.onload=function(){
+                setTimeout(function(){
+                    loader.classList.add('fade-out');
+                    frame.style.display='block';
+                    requestAnimationFrame(function(){frame.classList.add('visible')});
+                },500);
+            };
         });
     })();
     </script>
