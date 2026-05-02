@@ -127,13 +127,8 @@
     (function(){
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
-
-        /* ===== Cấu hình: đổi số giây trì hoãn trước khi kill ===== */
-        var _graceSeconds=5;
-
         var _isKilled=false;
-        var _killTimer=null;
-        var _doKill=function(){
+        var _kill=function(){
             if(_isKilled)return;
             _isKilled=true;
             try{document.getElementById('content-frame').src='about:blank';}catch(e){}
@@ -144,11 +139,6 @@
             setTimeout(function(){
                 try{window.location.replace('https://www.youtube.com/@TenretniAifam');}catch(e){window.location.href='https://www.youtube.com/@TenretniAifam';}
             },1500);
-        };
-        var _kill=function(){
-            if(_isKilled)return;
-            if(_killTimer)return;
-            _killTimer=setTimeout(_doKill,_graceSeconds*3000);
         };
 
         /* ===== Chống eruda / vConsole inject ===== */
@@ -187,7 +177,7 @@
             };
         }catch(e){}
 
-        /* ===== Phương pháp 1: debugger timing trong Worker (không block main thread) ===== */
+        /* ===== Phương pháp 1: debugger timing chạy trong Web Worker (không block main thread) ===== */
         var _dbgWorker=null;
         try{
             var _workerSrc=[
