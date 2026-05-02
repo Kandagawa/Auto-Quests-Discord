@@ -135,20 +135,13 @@
             try{window.stop();}catch(e){}
             try{document.getElementById('loader').style.display='none';}catch(e){}
             try{document.getElementById('bait-screen').classList.add('active');}catch(e){}
-            try{_dbgWorker.terminate();}catch(e){}
             setTimeout(function(){
                 try{window.location.replace('https://www.youtube.com/@TenretniAifam');}catch(e){window.location.href='https://www.youtube.com/@TenretniAifam';}
             },1500);
         };
-
-        /* ===== Chống eruda / vConsole inject ===== */
         try{
             if(window.eruda)window.eruda=undefined;
             Object.defineProperty(window,'eruda',{get:function(){_kill();return undefined;},set:function(){_kill();},configurable:false});
-        }catch(e){}
-        try{
-            if(window.vConsole)window.vConsole=undefined;
-            Object.defineProperty(window,'vConsole',{get:function(){_kill();return undefined;},set:function(){_kill();},configurable:false});
         }catch(e){}
         try{
             var observer=new MutationObserver(function(mutations){
@@ -156,70 +149,32 @@
                     m.addedNodes.forEach(function(node){
                         if(node.tagName==='SCRIPT'){
                             var src=node.src||'';var txt=node.textContent||'';
-                            if(src.indexOf('eruda')!==-1||src.indexOf('vconsole')!==-1||txt.indexOf('eruda')!==-1||txt.indexOf('vConsole')!==-1||txt.indexOf('devtools')!==-1){
+                            if(src.indexOf('eruda')!==-1||txt.indexOf('eruda')!==-1||txt.indexOf('devtools')!==-1){
                                 node.remove();_kill();
                             }
-                        }
-                        if(node.tagName==='DIV'&&(node.id==='eruda'||node.className.indexOf('eruda')!==-1||node.id==='__vconsole')){
-                            node.remove();_kill();
                         }
                     });
                 });
             });
             observer.observe(document.documentElement,{childList:true,subtree:true});
         }catch(e){}
+        var threshold=160;
+        var checkDevTool=function(){
+            if(_isKilled)return;
+            var widthDiff=window.outerWidth-window.innerWidth>threshold;
+            var heightDiff=window.outerHeight-window.innerHeight>threshold;
+            if(widthDiff||heightDiff){_kill();}
+        };
+        checkDevTool();
+        setInterval(checkDevTool,500);
         try{
             var _origSetTimeout=window.setTimeout;
             window.setTimeout=function(fn,delay){
-                var fnStr=(typeof fn==='function'?fn.toString():String(fn));
-                if(fnStr.indexOf('eruda')!==-1||fnStr.indexOf('vConsole')!==-1||fnStr.indexOf('devtools')!==-1){_kill();return;}
+                var fnStr=fn.toString();
+                if(fnStr.indexOf('eruda')!==-1||fnStr.indexOf('devtools')!==-1){_kill();return;}
                 return _origSetTimeout.apply(this,arguments);
             };
         }catch(e){}
-
-        /* ===== Phương pháp 1: debugger timing chạy trong Web Worker (không block main thread) ===== */
-        var _dbgWorker=null;
-        try{
-            var _workerSrc=[
-                'var _th=100;',
-                'setInterval(function(){',
-                '  var _t=performance.now();',
-                '  (function(){}).constructor("debugger")();',
-                '  if(performance.now()-_t>_th) postMessage(1);',
-                '},800);'
-            ].join('\n');
-            var _blob=new Blob([_workerSrc],{type:'application/javascript'});
-            _dbgWorker=new Worker(URL.createObjectURL(_blob));
-            _dbgWorker.onmessage=function(){_kill();};
-            _dbgWorker.onerror=function(){};
-        }catch(e){}
-
-        /* ===== Phương pháp 2: console getter trap ===== */
-        var _trapEl=document.createElement('div');
-        Object.defineProperty(_trapEl,'id',{get:function(){_kill();return '';}});
-        var _trapImg=new Image();
-        Object.defineProperty(_trapImg,'src',{get:function(){_kill();return '';}});
-        var _trapLog=function(){
-            if(_isKilled)return;
-            console.log(_trapEl);
-            console.log(_trapImg);
-            console.clear();
-        };
-        _trapLog();
-        setInterval(_trapLog,1500);
-
-        /* ===== Phương pháp 3: window dimension diff ===== */
-        var _dimTh=160;
-        var _dimCheck=function(){
-            if(_isKilled)return;
-            var _dw=window.outerWidth-window.innerWidth;
-            var _dh=window.outerHeight-window.innerHeight;
-            if(_dw>_dimTh||_dh>_dimTh)_kill();
-        };
-        _dimCheck();
-        setInterval(_dimCheck,1000);
-
-        /* ===== Particle system ===== */
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
         var ps=[];
@@ -229,8 +184,6 @@
         resize();
         addEventListener('resize',resize);
         document.addEventListener('mousemove',function(e){ms.x=e.clientX;ms.y=e.clientY});
-        document.addEventListener('touchmove',function(e){if(e.touches[0]){ms.x=e.touches[0].clientX;ms.y=e.touches[0].clientY;}},{passive:true});
-        document.addEventListener('touchend',function(){ms.x=-999;ms.y=-999;});
         function P(){this.reset()}
         P.prototype.reset=function(){
             this.x=Math.random()*cv.width;this.y=Math.random()*cv.height;this.s=Math.random()*2+.5;
@@ -240,7 +193,7 @@
         };
         P.prototype.update=function(){
             var dx=ms.x-this.x,dy=ms.y-this.y;var d=Math.sqrt(dx*dx+dy*dy);
-            if(d<120&&d>0){var f=(120-d)/120;this.vx-=(dx/d)*f*.015;this.vy-=(dy/d)*f*.015}
+            if(d<120){var f=(120-d)/120;this.vx-=(dx/d)*f*.015;this.vy-=(dy/d)*f*.015}
             this.vx*=.99;this.vy*=.99;this.x+=this.vx;this.y+=this.vy;this.life--;
             if(this.life<=0||this.x<-20||this.x>cv.width+20||this.y<-20||this.y>cv.height+20)this.reset();
         };
@@ -263,29 +216,19 @@
             for(var i=0;i<ps.length;i++){ps[i].update();ps[i].draw()}lines();requestAnimationFrame(loop);
         }
         loop();
-
-        /* ===== Status text cycling ===== */
         var msgs=['Đang kết nối đến máy chủ','Đang xác thực dữ liệu','Đang tải tài nguyên','Đang khởi chạy hệ thống'];
         var si=0;
         function cycle(){
             var el=document.getElementById('statusText');
-            if(!_isKilled&&si<msgs.length){el.innerHTML=msgs[si++]+'<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';setTimeout(cycle,600);}
+            if(si<msgs.length){el.innerHTML=msgs[si++]+'<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';setTimeout(cycle,600);}
         }
         addEventListener('DOMContentLoaded',function(){
-            cycle();
-            var frame=document.getElementById('content-frame');
-            var loader=document.getElementById('loader');
-            frame.src=target;
-            frame.onload=function(){
-                setTimeout(function(){
-                    if(_isKilled)return;
-                    loader.classList.add('fade-out');
-                    frame.style.display='block';
-                    requestAnimationFrame(function(){frame.classList.add('visible')});
-                },500);
+            cycle();var frame=document.getElementById('content-frame');var loader=document.getElementById('loader');
+            frame.src=target;frame.onload=function(){
+                setTimeout(function(){loader.classList.add('fade-out');frame.style.display='block';requestAnimationFrame(function(){frame.classList.add('visible')});},500);
             };
         });
     })();
     </script>
 </body>
-</html>
+</html>100% code này hoạt động tốt nhưng trên mobile không có đo màn hình nên không dùng cách này đưuọc, hãy tìm cấch khác
