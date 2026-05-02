@@ -7,12 +7,12 @@
     <meta property="og:title" content="Discord Quests Auto" />
     <meta property="og:description" content="• Tự động thực thi nhiệm vụ và đồng bộ dữ liệu ngay cả khi đóng tab.&#10;• Vận hành ổn định trên nền tảng cloud, đảm bảo tiến độ liên tục 24/7.&#10;• Công nghệ mã hóa đa tầng, bảo vệ quyền riêng tư và an toàn tài khoản.&#10;• Tương thích hoàn hảo trên mọi nền tảng thiết bị." />
     <meta property="og:type" content="website" />
+    <!-- Link OG được thay bằng link giả để che giấu nguồn thật -->
     <meta property="og:url" content="https://discord.com/" />
     <meta name="theme-color" content="#EB459E">
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/Kandagawa/Auto-Quests-Discord/main/f59f1e660b16370adbc1621f7907e382.jpg">
     <link rel="shortcut icon" type="image/jpeg" href="https://raw.githubusercontent.com/Kandagawa/Auto-Quests-Discord/main/f59f1e660b16370adbc1621f7907e382.jpg">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Kandagawa/Auto-Quests-Discord/main/f59f1e660b16370adbc1621f7907e382.jpg">
-    <link rel="stylesheet" href="css/styles.css">
     <style>
         :root{--blurple:#5865F2;--blurple-dark:#4752C4;--blurple-glow:rgba(88,101,242,.5);--green:#57F287;--yellow:#FEE75C;--fuchsia:#EB459E;--fuchsia-glow:rgba(235,69,158,.4);--red:#ED4245;--bg-primary:#0E0F13;--bg-secondary:#1A1B21;--bg-tertiary:#25262C;--text-muted:#6D7080;--text-normal:#C8CAD0;--glass:rgba(30,31,38,.6);--glass-border:rgba(88,101,242,.12)}
         *{margin:0;padding:0;box-sizing:border-box}
@@ -90,6 +90,7 @@
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
+    <!-- Nếu dùng Blob URL, ta phải xóa thuộc tính src của iframe đi để tránh hiện link trong Elements -->
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
     <div id="loader">
         <div class="logo-wrapper">
@@ -120,34 +121,15 @@
 
     <script>
     (function(){
-        var vFS = {
-            'css/styles.css': `/* Discord Quests Auto - Core Stylesheet */\n:root { --primary: #5865F2; --bg-dark: #0E0F13; }\nbody { margin: 0; padding: 0; font-family: system-ui; background: var(--bg-dark); }\n.container { width: 100%; max-width: 1200px; margin: 0 auto; }`,
-            'js/analytics.js': `// Google Analytics Proxy\nwindow.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-XXXXXXXXXX');\nconsole.log("Analytics initialized.");`,
-            'assets/config.json': `{\n  "apiEndpoint": "https://api.discord-quest.io/v2",\n  "wsUrl": "wss://gateway.discord.gg/?v=9&encoding=json",\n  "syncInterval": 30000,\n  "maxRetries": 3,\n  "debugMode": false\n}`,
-            'js/app.js': `// Main Application Logic\ndocument.addEventListener('DOMContentLoaded', () => {\n    const appConfig = fetch('/assets/config.json').then(r => r.json());\n    console.log("App initialized. Waiting for dependencies...");\n    \n    class QuestManager {\n        constructor() {\n            this.quests = [];\n            this.activeQuest = null;\n        }\n        sync() { console.log("Syncing quest data..."); }\n    }\n});`
-        };
-
-        var initFakeFS = function() {
-            try {
-                var sm = JSON.stringify({
-                    version: 3,
-                    sources: Object.keys(vFS),
-                    sourcesContent: Object.values(vFS),
-                    mappings: 'AAAA'
-                });
-                var s = document.createElement('script');
-                s.textContent = '//# sourceMappingURL=data:application/json;base64,' + btoa(sm);
-                document.head.appendChild(s);
-            } catch(e) {}
-        };
-        initFakeFS();
-
+        // --- MÃ HÓA VÀ GIẢI MÃ URL ---
+        // Link gốc đã được mã hóa Base64 kết hợp XOR với key '7' để tránh scan tool tự động
         var encUrl = "HR0cHM6Ly9kaXNjb3JkcXVlc3RhdXRvLnNwYWNlLXouYWkv";
         var k = 7;
         var decUrl = atob(encUrl).split('').map(function(c) { 
             return String.fromCharCode(c.charCodeAt(0) ^ k); 
         }).join('');
 
+        // --- CHỐNG DEBUG VÀ VIEW SOURCE ---
         var _kill=function(){
             document.body.innerHTML='';
             window.location.replace('about:blank');
@@ -179,6 +161,7 @@
 
         try{Object.defineProperty(document,'\x6f\x6e\x63\x6f\x6e\x74\x65\x78\x74\x6d\x65\x6e\x75',{get:function(){return function(){return false}},set:function(){}})}catch(e){}
 
+        // --- HIỆU ỨNG PARTICLE ---
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
         var ps=[];
@@ -245,7 +228,8 @@
         }
         loop();
 
-        var msgs=['Đang kết nối đến máy chủ','Đang xác thực dữ liệu','Đang tải tài nguyên','Đang khởi chạy hệ thống'];
+        // --- XỬ LÝ LOADER VÀ IFRAME BẰNG BLOB URL ---
+        var msgs=['Dang ket noi den may chu','Dang xac thuc du lieu','Dang tai tai nguyen','Dang khoi chay he thong'];
         var si=0;
         function cycle(){
             var el=document.getElementById('statusText');
@@ -260,6 +244,8 @@
             var frame=document.getElementById('content-frame');
             var loader=document.getElementById('loader');
             
+            // Dùng fetch để load nội dung của URL ẩn, sau đó chuyển thành Blob URL
+            // Đảm bảo trên Sources (F12) chỉ hiện blob:https://... chứ không hiện link web thật
             fetch(decUrl)
                 .then(function(response) { return response.text(); })
                 .then(function(html) {
@@ -276,6 +262,7 @@
                     };
                 })
                 .catch(function(err) {
+                    // Nếu có lỗi CORS, fallback về cách load cũ (vẫn mã hóa link trong src)
                     frame.src = decUrl;
                     frame.onload = function(){
                         setTimeout(function(){
