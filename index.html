@@ -45,7 +45,7 @@
         .logo-inner{width:100px;height:100px;background:linear-gradient(145deg,var(--blurple),var(--blurple-dark));border-radius:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px var(--blurple-glow),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);animation:logoPulse 2s ease-in-out infinite;position:relative;overflow:hidden}
         .logo-inner::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.07) 50%,transparent 60%);animation:shimmer 3s ease-in-out infinite}
         @keyframes shimmer{0%,100%{transform:translateX(-100%) rotate(45deg)}50%{transform:translateX(100%) rotate(45deg)}}
-        @keyframes logoPulse{0%,100%{box-shadow:0 0 30px var(--blurple-glow),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);transform:scale(1)}50%{box-shadow:0 0 50px var(--blurple-glow),0 8px 40px rgba(0,0,0,.5);inset 0 1px 0 rgba(255,255,255,.15);transform:scale(1.05)}}
+        @keyframes logoPulse{0%,100%{box-shadow:0 0 30px var(--blurple-glow),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);transform:scale(1)}50%{box-shadow:0 0 50px var(--blurple-glow);inset 0 1px 0 rgba(255,255,255,.15);transform:scale(1.05)}}
         .clyde-svg{width:56px;height:56px;fill:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));position:relative;z-index:1}
         .title-group{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:0;animation:slideUp .6s .15s ease-out forwards}
         @keyframes slideUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:translateY(0)}}
@@ -94,6 +94,10 @@
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
+    
+    <!-- Thẻ div bẫy ẩn -->
+    <div id="dev-bait" style="display:none;"></div>
+
     <div id="bait-screen">
         <h1>Chào Mừng Bạn</h1>
     </div>
@@ -169,13 +173,17 @@
             };
         }catch(e){}
 
-        // CONSOLE BAIT (KÍCH HOẠT BAIT KHI DEVTOOL PC/MOBILE MỞ)
-        var logBait=function(){
-            var obj={};
-            Object.defineProperty(obj,'id',{get:function(){_kill();return'';}});
-            console.log(obj);
-        };
-        setInterval(logBait,1000);
+        // DOM BAIT (TẠO DIV VÀ BẮT DEVTOOL TỰ ĐỌC)
+        try {
+            var baitEl = document.getElementById('dev-bait');
+            Object.defineProperty(baitEl, 'id', {
+                get: function() {
+                    _kill();
+                    return 'dev-bait';
+                },
+                configurable: true
+            });
+        } catch(e) {}
 
         // ĐO MÀN HÌNH PC
         var threshold=160;
