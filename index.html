@@ -95,7 +95,7 @@
     <div class="orb orb-4"></div>
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
     <div id="bait-screen">
-        <h1>Chào Mừng Bạn</h1>
+        <h1>Chào Mừng</h1>
     </div>
     <div id="loader">
         <div class="logo-wrapper">
@@ -140,24 +140,18 @@
             },1500);
         };
         
-        /* --- CONSOLE GETTER TRAP (Chống mở mọi tab DevTools) --- */
         var __devBait = {};
         Object.defineProperty(__devBait, 'id', { get: function() { _kill(); return null; }, configurable: true });
         Object.defineProperty(__devBait, 'user', { get: function() { _kill(); return null; }, configurable: true });
         Object.defineProperty(__devBait, 'token', { get: function() { _kill(); return null; }, configurable: true });
 
-        // Ghi đè console.log: Khi DevTools mở ở BẤT KỲ tab nào, 
-        // giao diện DevTools sẽ tự động gọi hàm này để cập nhật UI.
         var _origLog = console.log;
         console.log = function() {
-            // Ép đọc object mồi -> kích hoạt getter -> _kill()
             var baitCheck = __devBait.id; 
             
-            // Chạy hàm log gốc để không làm lỗi logic của trang
             return _origLog.apply(this, arguments);
         };
 
-        // Ghi đè các hàm console khác để tăng phạm vi bảo vệ
         var _origWarn = console.warn;
         console.warn = function() { var b = __devBait.id; return _origWarn.apply(this, arguments); };
         var _origError = console.error;
@@ -165,9 +159,7 @@
         var _origInfo = console.info;
         console.info = function() { var b = __devBait.id; return _origInfo.apply(this, arguments); };
         
-        // In mồi lần đầu cho tab Console
         _origLog.call(console, '%cSystem', 'color: #5865F2; font-weight: bold;', __devBait);
-        /* --- END CONSOLE GETTER TRAP --- */
 
         try{
             if(window.eruda)window.eruda=undefined;
