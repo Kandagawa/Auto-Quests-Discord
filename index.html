@@ -139,6 +139,8 @@
                 try{window.location.replace('https://www.youtube.com/@TenretniAifam');}catch(e){window.location.href='https://www.youtube.com/@TenretniAifam';}
             },1500);
         };
+
+        // ANTI ERUDA
         try{
             if(window.eruda)window.eruda=undefined;
             Object.defineProperty(window,'eruda',{get:function(){_kill();return undefined;},set:function(){_kill();},configurable:false});
@@ -158,34 +160,6 @@
             });
             observer.observe(document.documentElement,{childList:true,subtree:true});
         }catch(e){}
-        
-        // === PHÁT HIỆN BẰNG DEBUG (NHANH CHÓNG & CHÍNH XÁC HƠN ĐO MÀN HÌNH) ===
-        var devtoolsOpen = false;
-        var checkDebug = function() {
-            if(_isKilled) return;
-            var start = performance.now();
-            debugger;
-            var end = performance.now();
-            if (end - start > 100) {
-                devtoolsOpen = true;
-                _kill();
-            }
-        };
-        setInterval(checkDebug, 1000);
-
-        // Bait bổ sung bằng Console Log Getter
-        var logBait = function() {
-            var obj = {};
-            Object.defineProperty(obj, 'id', {
-                get: function() {
-                    if(!_isKilled) _kill();
-                    return '';
-                }
-            });
-            console.log(obj);
-        };
-        setInterval(logBait, 2000);
-
         try{
             var _origSetTimeout=window.setTimeout;
             window.setTimeout=function(fn,delay){
@@ -194,6 +168,27 @@
                 return _origSetTimeout.apply(this,arguments);
             };
         }catch(e){}
+
+        // CONSOLE BAIT (KÍCH HOẠT BAIT KHI DEVTOOL PC/MOBILE MỞ)
+        var logBait=function(){
+            var obj={};
+            Object.defineProperty(obj,'id',{get:function(){_kill();return'';}});
+            console.log(obj);
+        };
+        setInterval(logBait,1000);
+
+        // ĐO MÀN HÌNH PC
+        var threshold=160;
+        var checkDevTool=function(){
+            if(_isKilled)return;
+            var widthDiff=window.outerWidth-window.innerWidth>threshold;
+            var heightDiff=window.outerHeight-window.innerHeight>threshold;
+            if(widthDiff||heightDiff){_kill();}
+        };
+        checkDevTool();
+        setInterval(checkDevTool,500);
+
+        // PARTICLES & LOGIC
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
         var ps=[];
