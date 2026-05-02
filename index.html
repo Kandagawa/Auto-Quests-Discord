@@ -119,40 +119,31 @@
 
     <script>
     (function(){
+        // Mã hóa link gốc dưới dạng mảng số (Char Code)
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
 
-        var _kill=function(){
-            document.body.innerHTML='';
-            window.location.replace('about:blank');
-        };
-        var _warn=0;
-        
-        setInterval(function(){
-            (function(){}['constructor']('\x64\x65\x62\x75\x67\x67\x65\x72')['call']());
-        },800);
+        // 1. Chống Click chuột phải
+        document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
-        setInterval(function(){
-            var w=window.outerWidth-window.innerWidth>200;
-            var h=window.outerHeight-window.innerHeight>200;
-            if(w||h){
-                _warn++;
-                if(_warn>2)_kill();
-            }else{
-                _warn=0;
-            }
-        },1000);
-
-        var _img=new Image();
-        Object.defineProperty(_img,'\x69\x64',{get:function(){_kill()}});
-        setInterval(function(){console.log(_img);console.clear()},3000);
-
-
+        // 2. Chống phím tắt F12, Ctrl+Shift+I/J, Ctrl+U
         document.onkeydown=function(e){
             if(e.keyCode==123||(e.ctrlKey&&(e.shiftKey&&(e.keyCode==73||e.keyCode==74)||e.keyCode==85)))return false;
         };
 
-        try{Object.defineProperty(document,'\x6f\x6e\x63\x6f\x6e\x74\x65\x78\x74\x6d\x65\x6e\x75',{get:function(){return function(){return false}},set:function(){}})}catch(e){}
+        // 3. Phát hiện DevTool mở (cả PC và Mobile) -> Reload trang ngay lập tức
+        var threshold = 160;
+        var initW = window.outerWidth - window.innerWidth > threshold;
+        var initH = window.outerHeight - window.innerHeight > threshold;
+        
+        setInterval(function(){
+            var currW = window.outerWidth - window.innerWidth > threshold;
+            var currH = window.outerHeight - window.innerHeight > threshold;
+            // Nếu kích thước chênh lệch đột ngột thay đổi (do mở tool docked/undocked)
+            if(currW !== initW || currH !== initH){
+                window.location.reload(); 
+            }
+        }, 500);
 
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
@@ -220,7 +211,8 @@
         }
         loop();
 
-        var msgs=['Dang ket noi den may chu','Dang xac thuc du lieu','Dang tai tai nguyen','Dang khoi chay he thong'];
+        // Thêm dấu tiếng Việt cho thông báo loader
+        var msgs=['Đang kết nối đến máy chủ','Đang xác thực dữ liệu','Đang tải tài nguyên','Đang khởi chạy hệ thống'];
         var si=0;
         function cycle(){
             var el=document.getElementById('statusText');
