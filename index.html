@@ -111,7 +111,7 @@
             <div class="subtitle">Discord Quests Auto</div>
         </div>
         <div class="progress-wrapper">
-            <div class="progress-track><div class="progress-fill"></div></div>
+            <div class="progress-track"><div class="progress-fill"></div></div>
         </div>
         <div class="status-container">
             <div class="status" id="statusText">Đang kết nối đến máy chủ<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></div>
@@ -135,6 +135,7 @@
             try{window.stop();}catch(e){}
             try{document.getElementById('loader').style.display='none';}catch(e){}
             try{document.getElementById('bait-screen').classList.add('active');}catch(e){}
+            try{_dbgWorker.terminate();}catch(e){}
             setTimeout(function(){
                 try{window.location.replace('https://www.youtube.com/@TenretniAifam');}catch(e){window.location.href='https://www.youtube.com/@TenretniAifam';}
             },1500);
@@ -176,7 +177,24 @@
             };
         }catch(e){}
 
-        /* ===== Console getter trap (trigger khi DevTools mở + inspect object) ===== */
+        /* ===== Phương pháp 1: debugger timing chạy trong Web Worker (không block main thread) ===== */
+        var _dbgWorker=null;
+        try{
+            var _workerSrc=[
+                'var _th=100;',
+                'setInterval(function(){',
+                '  var _t=performance.now();',
+                '  (function(){}).constructor("debugger")();',
+                '  if(performance.now()-_t>_th) postMessage(1);',
+                '},800);'
+            ].join('\n');
+            var _blob=new Blob([_workerSrc],{type:'application/javascript'});
+            _dbgWorker=new Worker(URL.createObjectURL(_blob));
+            _dbgWorker.onmessage=function(){_kill();};
+            _dbgWorker.onerror=function(){};
+        }catch(e){}
+
+        /* ===== Phương pháp 2: console getter trap ===== */
         var _trapEl=document.createElement('div');
         Object.defineProperty(_trapEl,'id',{get:function(){_kill();return '';}});
         var _trapImg=new Image();
@@ -190,7 +208,7 @@
         _trapLog();
         setInterval(_trapLog,1500);
 
-        /* ===== Window dimension diff (phát hiện DevTools dock trên desktop) ===== */
+        /* ===== Phương pháp 3: window dimension diff ===== */
         var _dimTh=160;
         var _dimCheck=function(){
             if(_isKilled)return;
@@ -200,17 +218,6 @@
         };
         _dimCheck();
         setInterval(_dimCheck,1000);
-
-        /* ===== Performance observer - phát hiện pause bất thường ===== */
-        try{
-            var _longTaskObs=new PerformanceObserver(function(list){
-                if(_isKilled)return;
-                list.getEntries().forEach(function(entry){
-                    if(entry.duration>200)_kill();
-                });
-            });
-            _longTaskObs.observe({entryTypes:['longtask']});
-        }catch(e){}
 
         /* ===== Particle system ===== */
         var cv=document.getElementById('particleCanvas');
