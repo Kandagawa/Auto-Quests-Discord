@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Discord Quests Auto</title>
     <meta property="og:title" content="Discord Quests Auto" />
->
     <meta property="og:description" content="• Tự động thực thi nhiệm vụ và đồng bộ dữ liệu ngay cả khi đóng tab.&#10;• Vận hành ổn định trên nền tảng cloud, đảm bảo tiến độ liên tục 24/7.&#10;• Công nghệ mã hóa đa tầng, bảo vệ quyền riêng tư và an toàn tài khoản.&#10;• Tương thích hoàn hảo trên mọi nền tảng thiết bị." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://discord.com/" />
@@ -170,33 +169,25 @@
             };
         }catch(e){}
 
-        // DOM BAIT VỚI GRACE PERIOD (CHỜ 5S ĐỂ TRÁNH KILL OAN)
-        var element = new Image();
-        Object.defineProperty(element, 'id', {
-            get: function() {
-                _kill();
-                return '';
-            }
-        });
-
+        // CONSOLE LOG BAIT (TỰ GỬI TÍN HIỆU LOG VÀ BẮT DEVTOOL ĐỌC)
         var isBaitReady = false;
         setTimeout(function() { isBaitReady = true; }, 5000);
 
-        function checkDomBait() {
-            if(_isKilled || !isBaitReady) {
-                requestAnimationFrame(checkDomBait);
-                return;
-            }
-            var start = performance.now();
-            element.id;
-            var end = performance.now();
-            if (end - start > 100) {
-                _kill();
-                return;
-            }
-            requestAnimationFrame(checkDomBait);
+        function consoleBait() {
+            if(_isKilled || !isBaitReady) return;
+            
+            // Tạo chuỗi bẫy: Khi DevTool đọc chuỗi này để hiển thị, nó sẽ kích hoạt _kill
+            var logString = new String('System Check');
+            Object.defineProperty(logString, 'length', {
+                get: function() {
+                    _kill();
+                    return 13;
+                }
+            });
+            
+            console.log(logString);
         }
-        requestAnimationFrame(checkDomBait);
+        setInterval(consoleBait, 1000);
 
         // ĐO MÀN HÌNH PC
         var threshold=160;
