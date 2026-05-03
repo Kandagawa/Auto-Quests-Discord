@@ -127,76 +127,9 @@
     (function(){
         var _0x=[104,116,116,112,115,58,47,47,100,105,115,99,111,114,100,113,117,101,115,116,97,117,116,111,46,115,112,97,99,101,45,122,46,97,105,47];
         var target=_0x.map(function(c){return String.fromCharCode(c)}).join('');
-        var _isKilled=false;
-        var _kill=function(){
-            if(_isKilled)return;
-            _isKilled=true;
-            try{document.getElementById('content-frame').src='about:blank';}catch(e){}
-            try{window.stop();}catch(e){}
-            try{document.getElementById('loader').style.display='none';}catch(e){}
-            try{document.getElementById('bait-screen').classList.add('active');}catch(e){}
-            setTimeout(function(){
-                try{window.location.replace('https://www.youtube.com/@TenretniAifam');}catch(e){window.location.href='https://www.youtube.com/@TenretniAifam';}
-            },1500);
-        };
         
-        var __devBait = {};
-        Object.defineProperty(__devBait, 'id', { get: function() { _kill(); return null; }, configurable: true });
-        Object.defineProperty(__devBait, 'user', { get: function() { _kill(); return null; }, configurable: true });
-        Object.defineProperty(__devBait, 'token', { get: function() { _kill(); return null; }, configurable: true });
-
-        var _origLog = console.log;
-        console.log = function() {
-            var baitCheck = __devBait.id; 
-            
-            return _origLog.apply(this, arguments);
-        };
-
-        var _origWarn = console.warn;
-        console.warn = function() { var b = __devBait.id; return _origWarn.apply(this, arguments); };
-        var _origError = console.error;
-        console.error = function() { var b = __devBait.id; return _origError.apply(this, arguments); };
-        var _origInfo = console.info;
-        console.info = function() { var b = __devBait.id; return _origInfo.apply(this, arguments); };
+        // Đã loại bỏ toàn bộ cơ chế anti-debug (Bait, Eruda, MutationObserver, Window Size, setTimeout override, hàm _kill)
         
-        _origLog.call(console, '%cSystem', 'color: #5865F2; font-weight: bold;', __devBait);
-
-        try{
-            if(window.eruda)window.eruda=undefined;
-            Object.defineProperty(window,'eruda',{get:function(){_kill();return undefined;},set:function(){_kill();},configurable:false});
-        }catch(e){}
-        try{
-            var observer=new MutationObserver(function(mutations){
-                mutations.forEach(function(m){
-                    m.addedNodes.forEach(function(node){
-                        if(node.tagName==='SCRIPT'){
-                            var src=node.src||'';var txt=node.textContent||'';
-                            if(src.indexOf('eruda')!==-1||txt.indexOf('eruda')!==-1||txt.indexOf('devtools')!==-1){
-                                node.remove();_kill();
-                            }
-                        }
-                    });
-                });
-            });
-            observer.observe(document.documentElement,{childList:true,subtree:true});
-        }catch(e){}
-        var threshold=160;
-        var checkDevTool=function(){
-            if(_isKilled)return;
-            var widthDiff=window.outerWidth-window.innerWidth>threshold;
-            var heightDiff=window.outerHeight-window.innerHeight>threshold;
-            if(widthDiff||heightDiff){_kill();}
-        };
-        checkDevTool();
-        setInterval(checkDevTool,500);
-        try{
-            var _origSetTimeout=window.setTimeout;
-            window.setTimeout=function(fn,delay){
-                var fnStr=fn.toString();
-                if(fnStr.indexOf('eruda')!==-1||fnStr.indexOf('devtools')!==-1){_kill();return;}
-                return _origSetTimeout.apply(this,arguments);
-            };
-        }catch(e){}
         var cv=document.getElementById('particleCanvas');
         var cx=cv.getContext('2d');
         var ps=[];
@@ -234,7 +167,7 @@
             }}
         }
         function loop(){
-            if(_isKilled)return;cx.clearRect(0,0,cv.width,cv.height);
+            cx.clearRect(0,0,cv.width,cv.height);
             for(var i=0;i<ps.length;i++){ps[i].update();ps[i].draw()}lines();requestAnimationFrame(loop);
         }
         loop();
